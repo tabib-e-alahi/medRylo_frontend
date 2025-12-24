@@ -8,6 +8,7 @@ import { getRoleLabel, type UserRole } from "./nav-items";
 import { getNavForRole } from "./nav-items";
 import styles from "./dashboard.module.css";
 import { ThemeToggle } from "../shared/ThemeToggle/ThemeToggle";
+import Link from "next/link";
 
 function getInitials(name?: string | null): string {
   if (!name) return "?";
@@ -148,7 +149,7 @@ export function DashboardNavbar({ user, onMenuClick }: DashboardNavbarProps) {
                 { icon: User,     label: "Profile",  href: `/${role?.toLowerCase() ?? "user"}/profile` },
                 { icon: Settings, label: "Settings", href: `/${role?.toLowerCase() ?? "user"}/settings` },
               ].map(({ icon: Icon, label, href }) => (
-                <a
+                <Link
                   key={label}
                   href={href}
                   onClick={() => setDropdownOpen(false)}
@@ -173,7 +174,7 @@ export function DashboardNavbar({ user, onMenuClick }: DashboardNavbarProps) {
                 >
                   <Icon size={16} />
                   {label}
-                </a>
+                </Link>
               ))}
 
               <div style={{ borderTop: "1px solid var(--color-border)" }}>

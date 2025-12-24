@@ -68,13 +68,6 @@ export function useRequireGuest() {
   return { isLoading, isAuthenticated };
 }
 
-/**
- * Protect a page: redirect to /login if not authenticated,
- * redirect to /unauthorized if role doesn't match.
- *
- * IMPORTANT: While isLoading is true the caller must render a loading state
- * and NOT try to use `user` — it will be undefined until the session resolves.
- */
 export function useRequireAuth(allowedRoles?: UserRole[]) {
   const { isAuthenticated, isLoading, role, user } = useAuth();
   const router = useRouter();
@@ -89,7 +82,8 @@ export function useRequireAuth(allowedRoles?: UserRole[]) {
     }
 
     // Only enforce role restriction once we actually have a role
-    if (allowedRoles && allowedRoles.length > 0 && role) {
+    if (allowedRoles && allowedRoles.length > 0) {
+      if (!role) return;
       if (!allowedRoles.includes(role)) {
         router.replace("/unauthorized");
       }

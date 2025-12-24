@@ -31,5 +31,6 @@ export const archiveStaff = async (id: string) => {
 
 export const getMyStaffProfile = async () => {
   const { data } = await api.get("/pharmacy/staff/me");
+  console.log(data);
   return data;
 };

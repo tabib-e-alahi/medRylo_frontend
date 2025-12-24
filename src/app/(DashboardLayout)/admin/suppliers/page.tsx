@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useSuppliers, useCreateSupplier, useUpdateSupplier, useDeleteSupplier } from "@/features/suppliers/hooks";
+import { useSuppliers, useDeleteSupplier } from "@/features/suppliers/hooks";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
@@ -86,18 +86,18 @@ export default function SuppliersPage() {
                   <tr key={supplier.id}>
                     <td>
                       <div className={styles.supplierInfo}>
-                        <div className={styles.supplierName}>{supplier.name}</div>
-                        <div className={styles.supplierAddress}>{supplier.address || "-"}</div>
+                        <div className="text-(--color-text)">{supplier.name}</div>
+                        <div className="text-(--color-text-muted)">{supplier.address || "-"}</div>
                       </div>
                     </td>
                     <td>
-                      <div className={styles.contactPerson}>
+                      <div className="text-(--color-text-muted)">
                         <UserIcon className="w-3 h-3 mr-1 inline" />
                         {supplier.contactPerson || "-"}
                       </div>
                     </td>
                     <td>
-                      <div className={styles.contactDetails}>
+                      <div className="text-(--color-primary)">
                         {supplier.email && (
                           <div className={styles.detailItem}>
                             <Mail className="w-3 h-3 mr-1 inline" />

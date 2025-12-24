@@ -148,190 +148,263 @@ export default function CreatePurchasePage() {
   };
 
   return (
-    <div className="space-y-6 p-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-        <div>
-          <Button asChild variant="ghost" className="mb-2 px-0">
-            <Link href="/pharmacy/purchases">
-              <ArrowLeft className="size-4" />
-              Back to purchases
-            </Link>
-          </Button>
-          <h1 className="text-3xl font-bold text-slate-900">Create Purchase</h1>
-          <p className="text-slate-500">Record supplier invoices and receive stock into existing inventory items.</p>
-        </div>
-      </div>
-
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <Card className="rounded-lg">
-          <CardHeader>
-            <CardTitle className="text-base">Purchase Information</CardTitle>
-          </CardHeader>
-          <CardContent className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-            <div className="xl:col-span-2">
-              <Label>Supplier</Label>
-              <div className="mt-2 grid gap-2 md:grid-cols-[1fr_1.4fr]">
-                <div className="relative">
-                  <Search className="pointer-events-none absolute left-2.5 top-2.5 size-4 text-slate-400" />
-                  <Input value={supplierSearch} onChange={(event) => setSupplierSearch(event.target.value)} placeholder="Search supplier" className="pl-8" />
-                </div>
-                <select {...register("supplierId")} className="h-8 rounded-lg border border-input bg-white px-3 text-sm">
-                  <option value="">{suppliersLoading ? "Loading suppliers..." : "Select supplier"}</option>
-                  {((suppliers?.data ?? []) as Supplier[]).map((supplier) => (
-                    <option key={supplier.id} value={supplier.id}>{supplier.name}</option>
-                  ))}
-                </select>
-              </div>
-              {errors.supplierId && <p className="mt-1 text-xs text-red-600">{String(errors.supplierId.message)}</p>}
-            </div>
-
-            <div>
-              <Label htmlFor="invoiceNumber">Invoice Number</Label>
-              <Input id="invoiceNumber" {...register("invoiceNumber")} className="mt-2" />
-              {errors.invoiceNumber && <p className="mt-1 text-xs text-red-600">{String(errors.invoiceNumber.message)}</p>}
-            </div>
-
-            <div>
-              <Label htmlFor="purchaseDate">Purchase Date</Label>
-              <Input id="purchaseDate" type="date" {...register("purchaseDate")} className="mt-2" />
-            </div>
-
-            <div>
-              <Label htmlFor="purchaseStatus">Purchase Status</Label>
-              <select id="purchaseStatus" {...register("purchaseStatus")} className="mt-2 h-8 w-full rounded-lg border border-input bg-white px-3 text-sm">
-                <option value="PENDING">Pending</option>
-                <option value="RECEIVED">Received</option>
-              </select>
-            </div>
-
-            <div className="md:col-span-2 xl:col-span-3">
-              <Label htmlFor="note">Note</Label>
-              <Textarea id="note" {...register("note")} className="mt-2 min-h-20" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-lg">
-          <CardHeader className="gap-4 lg:flex-row lg:items-center lg:justify-between">
-            <div>
-              <CardTitle className="text-base">Purchase Items</CardTitle>
-              <p className="text-sm text-slate-500">Select active inventory rows. Received purchases increase these stock quantities.</p>
-            </div>
-            <div className="flex flex-col gap-2 sm:flex-row">
-              <div className="relative">
-                <Search className="pointer-events-none absolute left-2.5 top-2.5 size-4 text-slate-400" />
-                <Input value={inventorySearch} onChange={(event) => setInventorySearch(event.target.value)} placeholder="Search inventory" className="pl-8" />
-              </div>
-              <Button type="button" variant="outline" onClick={() => append(emptyItem)}>
-                <Plus className="size-4" />
-                Add Row
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="min-w-64">Inventory</TableHead>
-                    <TableHead>Qty</TableHead>
-                    <TableHead>Cost</TableHead>
-                    <TableHead>Selling</TableHead>
-                    <TableHead>Batch</TableHead>
-                    <TableHead>Expiry</TableHead>
-                    <TableHead>Total</TableHead>
-                    <TableHead className="text-right">Remove</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {fields.map((field, index) => (
-                    <TableRow key={field.id}>
-                      <TableCell>
-                        <select
-                          value={watchedItems[index]?.inventoryId || ""}
-                          onChange={(event) => handleInventoryChange(index, event.target.value)}
-                          className="h-8 w-full rounded-lg border border-input bg-white px-3 text-sm"
-                        >
-                          <option value="">{inventoryLoading ? "Loading inventory..." : "Select inventory item"}</option>
-                          {inventoryItems.map((item) => (
-                            <option key={item.id} value={item.id}>
-                              {item.medicine?.name} {item.medicine?.strength ? `- ${item.medicine.strength}` : ""} | Stock {item.stockQuantity}
-                            </option>
-                          ))}
-                        </select>
-                        <input type="hidden" {...register(`items.${index}.medicineId`)} />
-                        {errors.items?.[index]?.inventoryId && <p className="mt-1 text-xs text-red-600">{String(errors.items[index]?.inventoryId?.message)}</p>}
-                      </TableCell>
-                      <TableCell>
-                        <Input type="number" min={1} {...register(`items.${index}.quantity`)} className="w-24" />
-                      </TableCell>
-                      <TableCell>
-                        <Input type="number" step="0.01" min={0} {...register(`items.${index}.purchasePrice`)} className="w-28" />
-                      </TableCell>
-                      <TableCell>
-                        <Input type="number" step="0.01" min={0} {...register(`items.${index}.sellingPrice`)} className="w-28" />
-                      </TableCell>
-                      <TableCell>
-                        <Input {...register(`items.${index}.batchNumber`)} className="w-32" />
-                      </TableCell>
-                      <TableCell>
-                        <Input type="date" {...register(`items.${index}.expiryDate`)} className="w-36" />
-                      </TableCell>
-                      <TableCell className="font-semibold">
-                        {money(Number(watchedItems[index]?.quantity || 0) * Number(watchedItems[index]?.purchasePrice || 0))}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Button type="button" variant="destructive" size="icon" onClick={() => remove(index)} disabled={fields.length === 1} aria-label="Remove purchase row">
-                          <Trash2 className="size-4" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          </CardContent>
-        </Card>
-
-        <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
-          <Card className="rounded-lg">
-            <CardContent className="grid gap-5 pt-6 md:grid-cols-3">
-              <div>
-                <Label htmlFor="vatAmount">VAT Amount</Label>
-                <Input id="vatAmount" type="number" step="0.01" min={0} {...register("vatAmount")} className="mt-2" />
-              </div>
-              <div>
-                <Label htmlFor="discount">Discount</Label>
-                <Input id="discount" type="number" step="0.01" min={0} {...register("discount")} className="mt-2" />
-              </div>
-              <div>
-                <Label htmlFor="paidAmount">Paid Amount</Label>
-                <Input id="paidAmount" type="number" step="0.01" min={0} {...register("paidAmount")} className="mt-2" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="rounded-lg">
-            <CardContent className="space-y-3 pt-6 text-sm">
-              <div className="flex justify-between"><span className="text-slate-500">Subtotal</span><strong>{money(subtotal)}</strong></div>
-              <div className="flex justify-between"><span className="text-slate-500">VAT</span><strong>{money(vatAmount)}</strong></div>
-              <div className="flex justify-between"><span className="text-slate-500">Discount</span><strong>{money(discount)}</strong></div>
-              <div className="flex justify-between border-t pt-3 text-base"><span>Total</span><strong>{money(totalAmount)}</strong></div>
-              <div className="flex justify-between"><span className="text-slate-500">Paid</span><strong>{money(paidAmount)}</strong></div>
-              <div className="flex justify-between"><span className="text-slate-500">Due</span><strong>{money(dueAmount)}</strong></div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="flex justify-end gap-3">
-          <Button type="button" variant="outline" asChild>
-            <Link href="/pharmacy/purchases">Cancel</Link>
-          </Button>
-          <Button type="submit" disabled={isSubmitting || createPurchase.isPending}>
-            {isSubmitting || createPurchase.isPending ? "Saving..." : "Save Purchase"}
-          </Button>
-        </div>
-      </form>
+   <div className="space-y-6 p-6">
+  <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+    <div>
+      <Button asChild variant="ghost" className="mb-2 px-0">
+        <Link href="/pharmacy/purchases">
+          <ArrowLeft className="size-4" />
+          Back to purchases
+        </Link>
+      </Button>
+      <h1 className="text-3xl font-bold text-(--color-text)">Create Purchase</h1>
+      <p className="text-(--color-text-muted)">
+        Record supplier invoices and receive stock into existing inventory items.
+      </p>
     </div>
+  </div>
+
+  <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <Card className="rounded-lg bg-(--color-surface) border-(--color-border) text-(--color-text)">
+      <CardHeader>
+        <CardTitle className="text-base text-(--color-text)">Purchase Information</CardTitle>
+      </CardHeader>
+
+      <CardContent className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+        <div className="xl:col-span-2">
+          <Label>Supplier</Label>
+          <div className="mt-2 grid gap-2 md:grid-cols-[1fr_1.4fr]">
+            <div className="relative">
+              <Search className="pointer-events-none absolute left-2.5 top-2.5 size-4 text-(--color-text-faint)" />
+              <Input
+                value={supplierSearch}
+                onChange={(event) => setSupplierSearch(event.target.value)}
+                placeholder="Search supplier"
+                className="pl-8"
+              />
+            </div>
+            <select
+              {...register("supplierId")}
+              className="h-8 rounded-lg border border-(--color-border) bg-(--color-surface) px-3 text-sm text-(--color-text)"
+            >
+              <option value="">{suppliersLoading ? "Loading suppliers..." : "Select supplier"}</option>
+              {((suppliers?.data ?? []) as Supplier[]).map((supplier) => (
+                <option key={supplier.id} value={supplier.id}>
+                  {supplier.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          {errors.supplierId && (
+            <p className="mt-1 text-xs text-(--color-danger)">
+              {String(errors.supplierId.message)}
+            </p>
+          )}
+        </div>
+
+        <div>
+          <Label htmlFor="invoiceNumber">Invoice Number</Label>
+          <Input id="invoiceNumber" {...register("invoiceNumber")} className="mt-2" />
+          {errors.invoiceNumber && (
+            <p className="mt-1 text-xs text-(--color-danger)">
+              {String(errors.invoiceNumber.message)}
+            </p>
+          )}
+        </div>
+
+        <div>
+          <Label htmlFor="purchaseDate">Purchase Date</Label>
+          <Input id="purchaseDate" type="date" {...register("purchaseDate")} className="mt-2" />
+        </div>
+
+        <div>
+          <Label htmlFor="purchaseStatus">Purchase Status</Label>
+          <select
+            id="purchaseStatus"
+            {...register("purchaseStatus")}
+            className="mt-2 h-8 w-full rounded-lg border border-(--color-border) bg-(--color-surface) px-3 text-sm text-(--color-text)"
+          >
+            <option value="PENDING">Pending</option>
+            <option value="RECEIVED">Received</option>
+          </select>
+        </div>
+
+        <div className="md:col-span-2 xl:col-span-3">
+          <Label htmlFor="note">Note</Label>
+          <Textarea id="note" {...register("note")} className="mt-2 min-h-20" />
+        </div>
+      </CardContent>
+    </Card>
+
+    <Card className="rounded-lg bg-(--color-surface) border-(--color-border) text-(--color-text)">
+      <CardHeader className="gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div>
+          <CardTitle className="text-base text-(--color-text)">Purchase Items</CardTitle>
+          <p className="text-sm text-(--color-text-muted)">
+            Select active inventory rows. Received purchases increase these stock quantities.
+          </p>
+        </div>
+
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <div className="relative">
+            <Search className="pointer-events-none absolute left-2.5 top-2.5 size-4 text-(--color-text-faint)" />
+            <Input
+              value={inventorySearch}
+              onChange={(event) => setInventorySearch(event.target.value)}
+              placeholder="Search inventory"
+              className="pl-8"
+            />
+          </div>
+          <Button type="button" variant="outline" onClick={() => append(emptyItem)}>
+            <Plus className="size-4" />
+            Add Row
+          </Button>
+        </div>
+      </CardHeader>
+
+      <CardContent className="space-y-4">
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow className="border-(--color-border)">
+                <TableHead className="min-w-64 text-(--color-text-muted)">Inventory</TableHead>
+                <TableHead className="text-(--color-text-muted)">Qty</TableHead>
+                <TableHead className="text-(--color-text-muted)">Cost</TableHead>
+                <TableHead className="text-(--color-text-muted)">Selling</TableHead>
+                <TableHead className="text-(--color-text-muted)">Batch</TableHead>
+                <TableHead className="text-(--color-text-muted)">Expiry</TableHead>
+                <TableHead className="text-(--color-text-muted)">Total</TableHead>
+                <TableHead className="text-right text-(--color-text-muted)">Remove</TableHead>
+              </TableRow>
+            </TableHeader>
+
+            <TableBody>
+              {fields.map((field, index) => (
+                <TableRow key={field.id} className="border-(--color-border)">
+                  <TableCell>
+                    <select
+                      value={watchedItems[index]?.inventoryId || ""}
+                      onChange={(event) => handleInventoryChange(index, event.target.value)}
+                      className="h-8 w-full rounded-lg border border-(--color-border) bg-(--color-surface) px-3 text-sm text-(--color-text)"
+                    >
+                      <option value="">
+                        {inventoryLoading ? "Loading inventory..." : "Select inventory item"}
+                      </option>
+                      {inventoryItems.map((item) => (
+                        <option key={item.id} value={item.id}>
+                          {item.medicine?.name} {item.medicine?.strength ? `- ${item.medicine.strength}` : ""} | Stock {item.stockQuantity}
+                        </option>
+                      ))}
+                    </select>
+                    <input type="hidden" {...register(`items.${index}.medicineId`)} />
+                    {errors.items?.[index]?.inventoryId && (
+                      <p className="mt-1 text-xs text-(--color-danger)">
+                        {String(errors.items[index]?.inventoryId?.message)}
+                      </p>
+                    )}
+                  </TableCell>
+
+                  <TableCell>
+                    <Input type="number" min={1} {...register(`items.${index}.quantity`)} className="w-24" />
+                  </TableCell>
+
+                  <TableCell>
+                    <Input type="number" step="0.01" min={0} {...register(`items.${index}.purchasePrice`)} className="w-28" />
+                  </TableCell>
+
+                  <TableCell>
+                    <Input type="number" step="0.01" min={0} {...register(`items.${index}.sellingPrice`)} className="w-28" />
+                  </TableCell>
+
+                  <TableCell>
+                    <Input {...register(`items.${index}.batchNumber`)} className="w-32" />
+                  </TableCell>
+
+                  <TableCell>
+                    <Input type="date" {...register(`items.${index}.expiryDate`)} className="w-36" />
+                  </TableCell>
+
+                  <TableCell className="font-semibold text-(--color-text)">
+                    {money(Number(watchedItems[index]?.quantity || 0) * Number(watchedItems[index]?.purchasePrice || 0))}
+                  </TableCell>
+
+                  <TableCell className="text-right">
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="icon"
+                      onClick={() => remove(index)}
+                      disabled={fields.length === 1}
+                      aria-label="Remove purchase row"
+                    >
+                      <Trash2 className="size-4" />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      </CardContent>
+    </Card>
+
+    <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
+      <Card className="rounded-lg bg-(--color-surface) border-(--color-border) text-(--color-text)">
+        <CardContent className="grid gap-5 pt-6 md:grid-cols-3">
+          <div>
+            <Label htmlFor="vatAmount">VAT Amount</Label>
+            <Input id="vatAmount" type="number" step="0.01" min={0} {...register("vatAmount")} className="mt-2" />
+          </div>
+          <div>
+            <Label htmlFor="discount">Discount</Label>
+            <Input id="discount" type="number" step="0.01" min={0} {...register("discount")} className="mt-2" />
+          </div>
+          <div>
+            <Label htmlFor="paidAmount">Paid Amount</Label>
+            <Input id="paidAmount" type="number" step="0.01" min={0} {...register("paidAmount")} className="mt-2" />
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="rounded-lg bg-(--color-surface) border-(--color-border) text-(--color-text)">
+        <CardContent className="space-y-3 pt-6 text-sm">
+          <div className="flex justify-between">
+            <span className="text-(--color-text-muted)">Subtotal</span>
+            <strong className="text-(--color-text)">{money(subtotal)}</strong>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-(--color-text-muted)">VAT</span>
+            <strong className="text-(--color-text)">{money(vatAmount)}</strong>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-(--color-text-muted)">Discount</span>
+            <strong className="text-(--color-text)">{money(discount)}</strong>
+          </div>
+          <div className="flex justify-between border-t border-(--color-border) pt-3 text-base">
+            <span className="text-(--color-text)">Total</span>
+            <strong className="text-(--color-text)">{money(totalAmount)}</strong>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-(--color-text-muted)">Paid</span>
+            <strong className="text-(--color-text)">{money(paidAmount)}</strong>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-(--color-text-muted)">Due</span>
+            <strong className="text-(--color-text)">{money(dueAmount)}</strong>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+
+    <div className="flex justify-end gap-3">
+      <Button type="button" variant="outline" asChild>
+        <Link href="/pharmacy/purchases">Cancel</Link>
+      </Button>
+      <Button type="submit" disabled={isSubmitting || createPurchase.isPending}>
+        {isSubmitting || createPurchase.isPending ? "Saving..." : "Save Purchase"}
+      </Button>
+    </div>
+  </form>
+</div>
   );
 }

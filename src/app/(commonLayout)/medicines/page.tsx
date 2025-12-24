@@ -52,7 +52,9 @@ export default async function MedicinesPage({
 
   const medicines = response.data;
   const meta = response.meta || { total: 0, page: 1, limit: 12, totalPages: 1 };
-
+console.log("Response: ", response);
+console.log("medicines: ", medicines);
+console.log("Meta: ", meta);
   return (
     <div className="discovery-page">
       <section className="discovery-hero">

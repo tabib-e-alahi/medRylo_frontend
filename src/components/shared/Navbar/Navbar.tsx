@@ -140,7 +140,7 @@ export function Navbar() {
                       Dashboard
                     </Link>
                     <Link
-                      href="/dashboard/profile"
+                      href={`/${(user as any)?.role?.toLowerCase() ?? "user"}/profile`}
                       className="navbar-dropdown-item"
                     >
                       <User size={15} />
@@ -155,13 +155,6 @@ export function Navbar() {
                         Admin panel
                       </Link>
                     )}
-                    <Link
-                      href="/dashboard/settings"
-                      className="navbar-dropdown-item"
-                    >
-                      <Settings size={15} />
-                      Settings
-                    </Link>
                     <div className="navbar-dropdown-divider" />
                     <button
                       className="navbar-dropdown-item logout"

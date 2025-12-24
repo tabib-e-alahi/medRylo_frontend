@@ -165,118 +165,203 @@ export default function InvoiceDetailsPage() {
   const dueAmount = Number(invoice.dueAmount || 0);
 
   return (
-    <div className="space-y-6 p-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <div>
-          <Button asChild variant="ghost" className="mb-2 px-0">
-            <Link href="/pharmacy/invoices"><ArrowLeft className="size-4" />Back to invoices</Link>
-          </Button>
-          <h1 className="text-3xl font-bold text-slate-900">Invoice {invoice.invoiceNumber}</h1>
-          <p className="text-slate-500">Payment history and invoice item details.</p>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {dueAmount > 0 && invoice.paymentStatus !== "CANCELLED" && (
-            <Button onClick={() => setPaymentOpen(true)}><CreditCard className="size-4" />Record Payment</Button>
-          )}
-          <Button type="button" variant="outline" onClick={() => window.print()}><Printer className="size-4" />Print</Button>
-        </div>
-      </div>
-
-      <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
-        <Card className="rounded-lg">
-          <CardHeader><CardTitle className="text-base">Invoice Information</CardTitle></CardHeader>
-          <CardContent className="grid gap-4 md:grid-cols-2">
-            <div>
-              <div className="text-xs uppercase text-slate-500">Customer</div>
-              <div className="font-semibold text-slate-900">{invoice.customer?.name || "Walk-in Customer"}</div>
-              <div className="text-sm text-slate-500">{[invoice.customer?.phone, invoice.customer?.email].filter(Boolean).join(" | ")}</div>
-              <div className="text-sm text-slate-500">{invoice.customer?.address || ""}</div>
-            </div>
-            <div>
-              <div className="text-xs uppercase text-slate-500">Invoice</div>
-              <div className="font-semibold text-slate-900">{invoice.invoiceNumber}</div>
-              <div className="text-sm text-slate-500">{dateLabel(invoice.saleDate)}</div>
-            </div>
-            <div><Badge variant={statusVariant(invoice.paymentStatus)}>{invoice.paymentStatus}</Badge></div>
-            <div className="text-sm text-slate-500">{invoice.note || "No note added."}</div>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-lg">
-          <CardHeader><CardTitle className="text-base">Payment Summary</CardTitle></CardHeader>
-          <CardContent className="space-y-3 text-sm">
-            <div className="flex justify-between"><span className="text-slate-500">Subtotal</span><strong>{money(invoice.subtotal)}</strong></div>
-            <div className="flex justify-between"><span className="text-slate-500">VAT</span><strong>{money(invoice.vatAmount)}</strong></div>
-            <div className="flex justify-between"><span className="text-slate-500">Discount</span><strong>{money(invoice.discount)}</strong></div>
-            <div className="flex justify-between border-t pt-3 text-base"><span>Total</span><strong>{money(invoice.totalAmount)}</strong></div>
-            <div className="flex justify-between"><span className="text-slate-500">Paid</span><strong>{money(invoice.paidAmount)}</strong></div>
-            <div className="flex justify-between"><span className="text-slate-500">Due</span><strong>{money(invoice.dueAmount)}</strong></div>
-          </CardContent>
-        </Card>
-      </div>
-
-      <Card className="rounded-lg">
-        <CardHeader><CardTitle className="text-base">Items</CardTitle></CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Medicine</TableHead>
-                <TableHead>Qty</TableHead>
-                <TableHead>Unit Price</TableHead>
-                <TableHead>VAT</TableHead>
-                <TableHead>Discount</TableHead>
-                <TableHead className="text-right">Total</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {(invoice.items ?? []).map((item) => (
-                <TableRow key={item.id}>
-                  <TableCell>
-                    <div className="font-semibold text-slate-900">{item.medicine?.name || "-"}</div>
-                    <div className="text-xs text-slate-500">{[item.medicine?.genericName, item.medicine?.strength].filter(Boolean).join(" - ")}</div>
-                  </TableCell>
-                  <TableCell>{item.quantity}</TableCell>
-                  <TableCell>{money(item.unitPrice)}</TableCell>
-                  <TableCell>{money(item.vat)}</TableCell>
-                  <TableCell>{money(item.discount)}</TableCell>
-                  <TableCell className="text-right font-semibold">{money(item.total)}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
-
-      <Card className="rounded-lg">
-        <CardHeader><CardTitle className="text-base">Payment History</CardTitle></CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Date</TableHead>
-                <TableHead>Mode</TableHead>
-                <TableHead>Note</TableHead>
-                <TableHead className="text-right">Amount</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {payments.length ? payments.map((payment) => (
-                <TableRow key={payment.id}>
-                  <TableCell>{dateLabel(payment.paymentDate)}</TableCell>
-                  <TableCell>{payment.paymentMode}</TableCell>
-                  <TableCell>{payment.note || "-"}</TableCell>
-                  <TableCell className="text-right font-semibold">{money(payment.amount)}</TableCell>
-                </TableRow>
-              )) : (
-                <TableRow><TableCell colSpan={4} className="py-8 text-center text-slate-500">No payments recorded.</TableCell></TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
-
-      {paymentOpen && <PaymentModal invoiceId={invoice.id} dueAmount={dueAmount} onClose={() => setPaymentOpen(false)} />}
+   <div className="space-y-6 p-6">
+  <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+    <div>
+      <Button asChild variant="ghost" className="mb-2 px-0">
+        <Link href="/pharmacy/invoices">
+          <ArrowLeft className="size-4" />
+          Back to invoices
+        </Link>
+      </Button>
+      <h1 className="text-3xl font-bold text-(--color-text)">
+        Invoice {invoice.invoiceNumber}
+      </h1>
+      <p className="text-(--color-text-muted)">
+        Payment history and invoice item details.
+      </p>
     </div>
+
+    <div className="flex flex-wrap gap-2">
+      {dueAmount > 0 && invoice.paymentStatus !== "CANCELLED" && (
+        <Button onClick={() => setPaymentOpen(true)}>
+          <CreditCard className="size-4" />
+          Record Payment
+        </Button>
+      )}
+      <Button type="button" variant="outline" onClick={() => window.print()}>
+        <Printer className="size-4" />
+        Print
+      </Button>
+    </div>
+  </div>
+
+  <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
+    <Card className="rounded-lg bg-(--color-surface) border-(--color-border) text-(--color-text)">
+      <CardHeader>
+        <CardTitle className="text-base text-(--color-text)">Invoice Information</CardTitle>
+      </CardHeader>
+      <CardContent className="grid gap-4 md:grid-cols-2">
+        <div>
+          <div className="text-xs uppercase text-(--color-text-muted)">Customer</div>
+          <div className="font-semibold text-(--color-text)">
+            {invoice.customer?.name || "Walk-in Customer"}
+          </div>
+          <div className="text-sm text-(--color-text-muted)">
+            {[invoice.customer?.phone, invoice.customer?.email].filter(Boolean).join(" | ")}
+          </div>
+          <div className="text-sm text-(--color-text-muted)">
+            {invoice.customer?.address || ""}
+          </div>
+        </div>
+
+        <div>
+          <div className="text-xs uppercase text-(--color-text-muted)">Invoice</div>
+          <div className="font-semibold text-(--color-text)">
+            {invoice.invoiceNumber}
+          </div>
+          <div className="text-sm text-(--color-text-muted)">
+            {dateLabel(invoice.saleDate)}
+          </div>
+        </div>
+
+        <div>
+          <Badge variant={statusVariant(invoice.paymentStatus)}>
+            {invoice.paymentStatus}
+          </Badge>
+        </div>
+
+        <div className="text-sm text-(--color-text-muted)">
+          {invoice.note || "No note added."}
+        </div>
+      </CardContent>
+    </Card>
+
+    <Card className="rounded-lg bg-(--color-surface) border-(--color-border) text-(--color-text)">
+      <CardHeader>
+        <CardTitle className="text-base text-(--color-text)">Payment Summary</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-3 text-sm">
+        <div className="flex justify-between">
+          <span className="text-(--color-text-muted)">Subtotal</span>
+          <strong className="text-(--color-text)">{money(invoice.subtotal)}</strong>
+        </div>
+        <div className="flex justify-between">
+          <span className="text-(--color-text-muted)">VAT</span>
+          <strong className="text-(--color-text)">{money(invoice.vatAmount)}</strong>
+        </div>
+        <div className="flex justify-between">
+          <span className="text-(--color-text-muted)">Discount</span>
+          <strong className="text-(--color-text)">{money(invoice.discount)}</strong>
+        </div>
+        <div className="flex justify-between border-t border-(--color-border) pt-3 text-base">
+          <span className="text-(--color-text)">Total</span>
+          <strong className="text-(--color-text)">{money(invoice.totalAmount)}</strong>
+        </div>
+        <div className="flex justify-between">
+          <span className="text-(--color-text-muted)">Paid</span>
+          <strong className="text-(--color-text)">{money(invoice.paidAmount)}</strong>
+        </div>
+        <div className="flex justify-between">
+          <span className="text-(--color-text-muted)">Due</span>
+          <strong className="text-(--color-text)">{money(invoice.dueAmount)}</strong>
+        </div>
+      </CardContent>
+    </Card>
+  </div>
+
+  <Card className="rounded-lg bg-(--color-surface) border-(--color-border) text-(--color-text)">
+    <CardHeader>
+      <CardTitle className="text-base text-(--color-text)">Items</CardTitle>
+    </CardHeader>
+    <CardContent>
+      <Table>
+        <TableHeader>
+          <TableRow className="border-(--color-border)">
+            <TableHead className="text-(--color-text-muted)">Medicine</TableHead>
+            <TableHead className="text-(--color-text-muted)">Qty</TableHead>
+            <TableHead className="text-(--color-text-muted)">Unit Price</TableHead>
+            <TableHead className="text-(--color-text-muted)">VAT</TableHead>
+            <TableHead className="text-(--color-text-muted)">Discount</TableHead>
+            <TableHead className="text-right text-(--color-text-muted)">Total</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {(invoice.items ?? []).map((item) => (
+            <TableRow key={item.id} className="border-(--color-border)">
+              <TableCell>
+                <div className="font-semibold text-(--color-text)">
+                  {item.medicine?.name || "-"}
+                </div>
+                <div className="text-xs text-(--color-text-muted)">
+                  {[item.medicine?.genericName, item.medicine?.strength].filter(Boolean).join(" - ")}
+                </div>
+              </TableCell>
+              <TableCell className="text-(--color-text)">{item.quantity}</TableCell>
+              <TableCell className="text-(--color-text)">{money(item.unitPrice)}</TableCell>
+              <TableCell className="text-(--color-text)">{money(item.vat)}</TableCell>
+              <TableCell className="text-(--color-text)">{money(item.discount)}</TableCell>
+              <TableCell className="text-right font-semibold text-(--color-text)">
+                {money(item.total)}
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </CardContent>
+  </Card>
+
+  <Card className="rounded-lg bg-(--color-surface) border-(--color-border) text-(--color-text)">
+    <CardHeader>
+      <CardTitle className="text-base text-(--color-text)">Payment History</CardTitle>
+    </CardHeader>
+    <CardContent>
+      <Table>
+        <TableHeader>
+          <TableRow className="border-(--color-border)">
+            <TableHead className="text-(--color-text-muted)">Date</TableHead>
+            <TableHead className="text-(--color-text-muted)">Mode</TableHead>
+            <TableHead className="text-(--color-text-muted)">Note</TableHead>
+            <TableHead className="text-right text-(--color-text-muted)">Amount</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {payments.length ? (
+            payments.map((payment) => (
+              <TableRow key={payment.id} className="border-(--color-border)">
+                <TableCell className="text-(--color-text)">
+                  {dateLabel(payment.paymentDate)}
+                </TableCell>
+                <TableCell className="text-(--color-text)">
+                  {payment.paymentMode}
+                </TableCell>
+                <TableCell className="text-(--color-text)">
+                  {payment.note || "-"}
+                </TableCell>
+                <TableCell className="text-right font-semibold text-(--color-text)">
+                  {money(payment.amount)}
+                </TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow className="border-(--color-border)">
+              <TableCell colSpan={4} className="py-8 text-center text-(--color-text-muted)">
+                No payments recorded.
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+    </CardContent>
+  </Card>
+
+  {paymentOpen && (
+    <PaymentModal
+      invoiceId={invoice.id}
+      dueAmount={dueAmount}
+      onClose={() => setPaymentOpen(false)}
+    />
+  )}
+</div>
   );
 }

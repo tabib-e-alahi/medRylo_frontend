@@ -122,15 +122,17 @@ export default function AdminMedicineRequestsPage() {
   return (
     <div className="space-y-6 p-6">
       <div>
-        <h1 className="text-3xl font-bold text-slate-900">Medicine Requests</h1>
-        <p className="text-slate-500">Review missing medicine submissions from approved pharmacies.</p>
+        <h1 className="text-3xl font-bold text-(--color-text)">Medicine Requests</h1>
+        <p className="text-(--color-text-muted)">
+          Review missing medicine submissions from approved pharmacies.
+        </p>
       </div>
 
-      <Card className="rounded-lg">
+      <Card className="rounded-lg bg-(--color-surface) border-(--color-border) text-(--color-text)">
         <CardContent className="space-y-4 pt-4">
           <div className="grid gap-3 md:grid-cols-[2fr_1fr]">
             <div className="relative">
-              <Search className="pointer-events-none absolute left-2.5 top-2.5 size-4 text-slate-400" />
+              <Search className="pointer-events-none absolute left-2.5 top-2.5 size-4 text-(--color-text-faint)" />
               <Input
                 value={searchTerm}
                 onChange={(event) => {
@@ -138,16 +140,17 @@ export default function AdminMedicineRequestsPage() {
                   setSearchTerm(event.target.value);
                 }}
                 placeholder="Search requested name, generic, company, or note"
-                className="pl-8"
+                className="pl-8 bg-(--color-bg)"
               />
             </div>
+
             <select
               value={status}
               onChange={(event) => {
                 setPage(1);
                 setStatus(event.target.value);
               }}
-              className="h-8 rounded-lg border bg-white px-3 text-sm"
+              className="h-8 rounded-lg border border-(--color-border) bg-(--color-bg) px-3 text-sm text-(--color-text)"
             >
               <option value="">All statuses</option>
               <option value="PENDING">Pending</option>
@@ -158,53 +161,76 @@ export default function AdminMedicineRequestsPage() {
 
           <Table>
             <TableHeader>
-              <TableRow>
-                <TableHead>Requested Medicine</TableHead>
-                <TableHead>Suggestions</TableHead>
-                <TableHead>Pharmacy</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Submitted</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+              <TableRow className="border-(--color-border)">
+                <TableHead className="text-(--color-text-muted)">Requested Medicine</TableHead>
+                <TableHead className="text-(--color-text-muted)">Suggestions</TableHead>
+                <TableHead className="text-(--color-text-muted)">Pharmacy</TableHead>
+                <TableHead className="text-(--color-text-muted)">Status</TableHead>
+                <TableHead className="text-(--color-text-muted)">Submitted</TableHead>
+                <TableHead className="text-right text-(--color-text-muted)">Actions</TableHead>
               </TableRow>
             </TableHeader>
+
             <TableBody>
               {isLoading ? (
                 Array.from({ length: 5 }).map((_, index) => (
-                  <TableRow key={index}>
+                  <TableRow key={index} className="border-(--color-border)">
                     <TableCell colSpan={6}>
-                      <div className="h-10 w-full rounded-md bg-slate-100" />
+                      <div className="h-10 w-full rounded-md bg-(--color-bg-secondary)" />
                     </TableCell>
                   </TableRow>
                 ))
               ) : requests.length ? (
                 requests.map((request) => (
-                  <TableRow key={request.id}>
+                  <TableRow key={request.id} className="border-(--color-border)">
                     <TableCell>
-                      <div className="font-semibold text-slate-900">{request.requestedName}</div>
-                      <div className="text-xs text-slate-500">{[request.genericName, request.strength, request.companyName].filter(Boolean).join(" - ") || "No extra details"}</div>
+                      <div className="font-semibold text-(--color-text)">
+                        {request.requestedName}
+                      </div>
+                      <div className="text-xs text-(--color-text-muted)">
+                        {[request.genericName, request.strength, request.companyName].filter(Boolean).join(" - ") || "No extra details"}
+                      </div>
                     </TableCell>
-                    <TableCell className="text-xs text-slate-600">
+
+                    <TableCell className="text-xs text-(--color-text-muted)">
                       <div>{request.categorySuggestion || "No category"}</div>
                       <div>{request.typeSuggestion || "No type"} / {request.unitSuggestion || "No unit"}</div>
                     </TableCell>
+
                     <TableCell>
-                      <div className="font-medium text-slate-800">{request.pharmacy?.name}</div>
-                      <div className="text-xs text-slate-500">{request.pharmacy?.owner?.email}</div>
+                      <div className="font-medium text-(--color-text)">
+                        {request.pharmacy?.name}
+                      </div>
+                      <div className="text-xs text-(--color-text-muted)">
+                        {request.pharmacy?.owner?.email}
+                      </div>
                     </TableCell>
+
                     <TableCell>
-                      <Badge variant={statusVariant(request.status)}>{request.status}</Badge>
+                      <Badge variant={statusVariant(request.status)}>
+                        {request.status}
+                      </Badge>
                     </TableCell>
-                    <TableCell>{dateLabel(request.createdAt)}</TableCell>
+
+                    <TableCell className="text-(--color-text)">
+                      {dateLabel(request.createdAt)}
+                    </TableCell>
+
                     <TableCell className="text-right">
-                      <Button variant="outline" size="sm" onClick={() => openReview(request)} disabled={request.status !== "PENDING"}>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => openReview(request)}
+                        disabled={request.status !== "PENDING"}
+                      >
                         Review
                       </Button>
                     </TableCell>
                   </TableRow>
                 ))
               ) : (
-                <TableRow>
-                  <TableCell colSpan={6} className="py-10 text-center text-slate-500">
+                <TableRow className="border-(--color-border)">
+                  <TableCell colSpan={6} className="py-10 text-center text-(--color-text-muted)">
                     No medicine requests found.
                   </TableCell>
                 </TableRow>
@@ -212,13 +238,23 @@ export default function AdminMedicineRequestsPage() {
             </TableBody>
           </Table>
 
-          <div className="flex items-center justify-between border-t pt-4 text-sm text-slate-500">
+          <div className="flex items-center justify-between border-t border-(--color-border) pt-4 text-sm text-(--color-text-muted)">
             <span>Page {meta?.page ?? page} of {meta?.totalPages ?? 1}</span>
             <div className="flex gap-2">
-              <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => setPage((current) => Math.max(1, current - 1))}>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={page <= 1}
+                onClick={() => setPage((current) => Math.max(1, current - 1))}
+              >
                 Previous
               </Button>
-              <Button variant="outline" size="sm" disabled={!meta || page >= meta.totalPages} onClick={() => setPage((current) => current + 1)}>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={!meta || page >= meta.totalPages}
+                onClick={() => setPage((current) => current + 1)}
+              >
                 Next
               </Button>
             </div>
@@ -317,12 +353,12 @@ function ReviewModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-4 backdrop-blur-sm">
-      <div className="flex max-h-[92vh] w-full max-w-4xl flex-col overflow-hidden rounded-xl border bg-white shadow-xl">
-        <div className="flex items-center justify-between border-b bg-slate-50 px-6 py-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-(--color-text)/50 p-4 backdrop-blur-sm">
+      <div className="flex max-h-[92vh] w-full max-w-4xl flex-col overflow-hidden rounded-xl border border-(--color-border) bg-(--color-surface) text-(--color-text) shadow-xl">
+        <div className="flex items-center justify-between border-b border-(--color-border) bg-(--color-bg-secondary) px-6 py-4">
           <div>
-            <h2 className="text-lg font-semibold text-slate-900">Review Medicine Request</h2>
-            <p className="text-sm text-slate-500">{request.pharmacy?.name} submitted this request.</p>
+            <h2 className="text-lg font-semibold text-(--color-text)">Review Medicine Request</h2>
+            <p className="text-sm text-(--color-text-muted)">{request.pharmacy?.name} submitted this request.</p>
           </div>
           <Button type="button" variant="ghost" size="icon" onClick={onClose} aria-label="Close">
             <X className="size-4" />
@@ -330,28 +366,28 @@ function ReviewModal({
         </div>
 
         <div className="grid gap-6 overflow-y-auto p-6 lg:grid-cols-[1fr_2fr]">
-          <div className="space-y-4 rounded-lg border bg-slate-50 p-4">
+          <div className="space-y-4 rounded-lg border border-(--color-border) bg-(--color-bg-secondary) p-4 text-(--color-text)">
             <div>
-              <div className="text-xs font-semibold uppercase text-slate-500">Requested</div>
-              <div className="text-lg font-bold text-slate-900">{request.requestedName}</div>
+              <div className="text-xs font-semibold uppercase text-(--color-text-muted)">Requested</div>
+              <div className="text-lg font-bold text-(--color-text)">{request.requestedName}</div>
             </div>
-            <div className="space-y-2 text-sm">
-              <div><span className="font-medium">Generic:</span> {request.genericName || "-"}</div>
-              <div><span className="font-medium">Strength:</span> {request.strength || "-"}</div>
-              <div><span className="font-medium">Company:</span> {request.companyName || "-"}</div>
-              <div><span className="font-medium">Category:</span> {request.categorySuggestion || "-"}</div>
-              <div><span className="font-medium">Type:</span> {request.typeSuggestion || "-"}</div>
-              <div><span className="font-medium">Unit:</span> {request.unitSuggestion || "-"}</div>
+            <div className="space-y-2 text-sm text-(--color-text)">
+              <div><span className="font-medium text-(--color-text)">Generic:</span> {request.genericName || "-"}</div>
+              <div><span className="font-medium text-(--color-text)">Strength:</span> {request.strength || "-"}</div>
+              <div><span className="font-medium text-(--color-text)">Company:</span> {request.companyName || "-"}</div>
+              <div><span className="font-medium text-(--color-text)">Category:</span> {request.categorySuggestion || "-"}</div>
+              <div><span className="font-medium text-(--color-text)">Type:</span> {request.typeSuggestion || "-"}</div>
+              <div><span className="font-medium text-(--color-text)">Unit:</span> {request.unitSuggestion || "-"}</div>
             </div>
             {request.note && (
-              <div className="rounded-md bg-white p-3 text-sm text-slate-600">
+              <div className="rounded-md bg-(--color-surface) p-3 text-sm text-(--color-text-muted)">
                 {request.note}
               </div>
             )}
           </div>
 
           {isRejecting ? (
-            <div className="space-y-4">
+            <div className="space-y-4 text-(--color-text)">
               <Label htmlFor="adminNote">Rejection Reason</Label>
               <Textarea
                 id="adminNote"
@@ -367,12 +403,12 @@ function ReviewModal({
               </div>
             </div>
           ) : (
-            <form onSubmit={handleSubmit(onApprove)} className="space-y-5">
+            <form onSubmit={handleSubmit(onApprove)} className="space-y-5 text-(--color-text)">
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
                   <Label htmlFor="name">Medicine Name</Label>
                   <Input id="name" {...register("name")} className="mt-2" />
-                  {errors.name && <p className="mt-1 text-xs text-red-600">{String(errors.name.message)}</p>}
+                  {errors.name && <p className="mt-1 text-xs text-(--color-danger)">{String(errors.name.message)}</p>}
                 </div>
                 <div>
                   <Label htmlFor="genericName">Generic Name</Label>
@@ -392,28 +428,28 @@ function ReviewModal({
                 </div>
                 <div>
                   <Label htmlFor="categoryId">Category</Label>
-                  <select id="categoryId" {...register("categoryId")} className="mt-2 h-8 w-full rounded-lg border bg-white px-3 text-sm">
+                  <select id="categoryId" {...register("categoryId")} className="mt-2 h-8 w-full rounded-lg border border-(--color-border) bg-(--color-surface) px-3 text-sm text-(--color-text)">
                     <option value="">No category</option>
                     {categories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}
                   </select>
                 </div>
                 <div>
                   <Label htmlFor="typeId">Type</Label>
-                  <select id="typeId" {...register("typeId")} className="mt-2 h-8 w-full rounded-lg border bg-white px-3 text-sm">
+                  <select id="typeId" {...register("typeId")} className="mt-2 h-8 w-full rounded-lg border border-(--color-border) bg-(--color-surface) px-3 text-sm text-(--color-text)">
                     <option value="">No type</option>
                     {types.map((type) => <option key={type.id} value={type.id}>{type.name}</option>)}
                   </select>
                 </div>
                 <div>
                   <Label htmlFor="unitId">Unit</Label>
-                  <select id="unitId" {...register("unitId")} className="mt-2 h-8 w-full rounded-lg border bg-white px-3 text-sm">
+                  <select id="unitId" {...register("unitId")} className="mt-2 h-8 w-full rounded-lg border border-(--color-border) bg-(--color-surface) px-3 text-sm text-(--color-text)">
                     <option value="">No unit</option>
                     {units.map((unit) => <option key={unit.id} value={unit.id}>{unit.name} ({unit.symbol})</option>)}
                   </select>
                 </div>
                 <div>
                   <Label htmlFor="supplierId">Supplier</Label>
-                  <select id="supplierId" {...register("supplierId")} className="mt-2 h-8 w-full rounded-lg border bg-white px-3 text-sm">
+                  <select id="supplierId" {...register("supplierId")} className="mt-2 h-8 w-full rounded-lg border border-(--color-border) bg-(--color-surface) px-3 text-sm text-(--color-text)">
                     <option value="">No supplier</option>
                     {suppliers.map((supplier) => <option key={supplier.id} value={supplier.id}>{supplier.name}</option>)}
                   </select>
@@ -428,7 +464,7 @@ function ReviewModal({
                 </div>
               </div>
 
-              <div className="flex justify-end gap-3 border-t pt-4">
+              <div className="flex justify-end gap-3 border-t border-(--color-border) pt-4">
                 <Button type="button" variant="outline" onClick={() => setIsRejecting(true)}>
                   Reject
                 </Button>

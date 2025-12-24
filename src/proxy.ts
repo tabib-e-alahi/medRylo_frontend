@@ -16,86 +16,104 @@ const ROLE_DASHBOARD_MAP: Record<string, string> = {
   USER: "/user/dashboard",
 };
 
+const BACKEND_ORIGIN =
+  process.env.BACKEND_ORIGIN ||
+  process.env.NEXT_PUBLIC_BACKEND_BASE_URL ||
+  "http://localhost:5000";
+
+
+function getSessionToken(request: NextRequest) {
+  return (
+    request.cookies.get("session_token")?.value ||
+    request.cookies.get("__Secure-session_token")?.value ||
+    request.cookies.get("better-auth.session_data")?.value ||
+    request.cookies.get("__Secure-better-auth.session_data")?.value ||
+    null
+  );
+}
+
 export async function proxy(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-  const sessionToken = request.cookies.get("session_token")?.value;
-  // ── Guest-only pages (login, register) ──────────────────
-  const isAuthPage = AUTH_PAGES.some((p) => pathname.startsWith(p));
+  const { pathname, search } = request.nextUrl;
+ console.log("PROXY HIT:", request.nextUrl.pathname);
+  const sessionToken = getSessionToken(request);
+   console.log("\n============== From proxy:sessionToken ============\n", sessionToken, "\n===================\n");
+  const isAuthPage = AUTH_PAGES.some((page) => pathname.startsWith(page));
 
   if (isAuthPage) {
     if (sessionToken) {
-      // User has a session cookie — try to get their role for redirect
       const userData = await fetchUserRole(request);
-      console.log(userData);
-      if (userData) {
-        const redirectPath = ROLE_DASHBOARD_MAP[userData.role] || "/user/dashboard";
+console.log("\n============== From proxy:user role 1 ============\n", userData, "\n===================\n");
+      if (userData?.role) {
+        const redirectPath =
+          ROLE_DASHBOARD_MAP[userData.role] || "/user/dashboard";
+console.log("\n============== From proxy:user role 2 ============\n", userData, "\n===================\n");
         return NextResponse.redirect(new URL(redirectPath, request.url));
       }
     }
-    // No session or invalid — allow access to auth pages
+
     return NextResponse.next();
   }
 
-  // ── Protected dashboard routes ──────────────────────────
   const matchedPrefix = Object.keys(ROLE_ROUTE_MAP).find((prefix) =>
     pathname.startsWith(prefix)
   );
 
-  if (matchedPrefix) {
-    if (!sessionToken) {
-      // No session cookie — redirect to login
-      const loginUrl = new URL("/login", request.url);
-      loginUrl.searchParams.set("callbackUrl", pathname);
-      return NextResponse.redirect(loginUrl);
-    }
-
-    // Validate session and check role
-    const userData = await fetchUserRole(request);
-    if (!userData) {
-      // Invalid session — redirect to login
-      const loginUrl = new URL("/login", request.url);
-      loginUrl.searchParams.set("callbackUrl", pathname);
-      const response = NextResponse.redirect(loginUrl);
-      // Clear stale cookie
-      response.cookies.delete("session_token");
-      return response;
-    }
-
-    const requiredRole = ROLE_ROUTE_MAP[matchedPrefix];
-    if (requiredRole && userData.role !== requiredRole) {
-      // Wrong role — redirect to unauthorized
-      return NextResponse.redirect(new URL("/unauthorized", request.url));
-    }
-
+  if (!matchedPrefix) {
     return NextResponse.next();
   }
 
-  // ── All other routes — pass through ────────────────────
+  if (!sessionToken) {
+    const loginUrl = new URL("/login", request.url);
+    loginUrl.searchParams.set("callbackUrl", `${pathname}${search}`);
+    return NextResponse.redirect(loginUrl);
+  }
+
+  const userData = await fetchUserRole(request);
+
+  if (!userData?.role) {
+    const loginUrl = new URL("/login", request.url);
+    loginUrl.searchParams.set("callbackUrl", `${pathname}${search}`);
+
+    const response = NextResponse.redirect(loginUrl);
+    response.cookies.delete("session_token");
+    response.cookies.delete("__Secure-session_token");
+    response.cookies.delete("better-auth.session_data");
+    response.cookies.delete("__Secure-better-auth.session_data");
+    
+    return response;
+  }
+
+  const requiredRole = ROLE_ROUTE_MAP[matchedPrefix];
+
+  if (requiredRole && userData.role !== requiredRole) {
+    return NextResponse.redirect(new URL("/unauthorized", request.url));
+  }
+
   return NextResponse.next();
 }
 
-/**
- * Fetch user role from the backend /api/v1/auth/me endpoint.
- * Returns { role } or null if unauthenticated.
- */
 async function fetchUserRole(
   request: NextRequest
 ): Promise<{ role: string } | null> {
   try {
-    // Use the backend URL through the rewrite proxy
-    const baseUrl = request.nextUrl.origin;
-    const res = await fetch(`${baseUrl}/api/v1/auth/me`, {
+    const cookie = request.headers.get("cookie") || "";
+console.log("\n============== From proxy:cookie ============\n", cookie, "\n===================\n");
+    const res = await fetch(`${BACKEND_ORIGIN}/api/v1/auth/me`, {
+      method: "GET",
       headers: {
-        cookie: request.headers.get("cookie") || "",
+        cookie,
+        accept: "application/json",
       },
       cache: "no-store",
     });
-    console.log("From fetch user role", res);
+console.log("\n============== From proxy:res fetch res ============\n", res, "\n===================\n");
     if (!res.ok) return null;
 
     const json = await res.json();
-    console.log("From fetch user role", json);
-    return json?.data?.user ? { role: json.data.user.role } : null;
+console.log(json);
+    const role = json?.data?.user?.role;
+
+    return role ? { role } : null;
   } catch {
     return null;
   }

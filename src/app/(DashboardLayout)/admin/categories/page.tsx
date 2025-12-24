@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { useCategories, useCreateCategory, useUpdateCategory, useDeleteCategory } from "@/features/categories/hooks";
+import { useCategories, useDeleteCategory } from "@/features/categories/hooks";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Plus, Search, Edit2, Trash2, MoreHorizontal, Filter } from "lucide-react";
+import { Plus, Search, Edit2, Trash2, Filter } from "lucide-react";
 import styles from "./categories.module.css";
 import { CategoryFormModal } from "./components/CategoryFormModal";
 

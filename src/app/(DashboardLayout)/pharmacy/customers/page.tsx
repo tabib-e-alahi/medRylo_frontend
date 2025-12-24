@@ -135,78 +135,137 @@ export default function PharmacyCustomersPage() {
 
   return (
     <div className="space-y-6 p-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-slate-900">Customers</h1>
-          <p className="text-slate-500">Manage pharmacy customers for invoice and sales records.</p>
-        </div>
-        <Button onClick={handleAdd}>
-          <Plus className="size-4" />
-          Add Customer
-        </Button>
+  <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+    <div>
+      <h1 className="text-3xl font-bold text-(--color-text)">Customers</h1>
+      <p className="text-(--color-text-muted)">
+        Manage pharmacy customers for invoice and sales records.
+      </p>
+    </div>
+    <Button onClick={handleAdd}>
+      <Plus className="size-4" />
+      Add Customer
+    </Button>
+  </div>
+
+  <Card className="rounded-lg bg-(--color-surface) border-(--color-border) text-(--color-text)">
+    <CardContent className="space-y-4 pt-4">
+      <div className="relative max-w-xl">
+        <Search className="pointer-events-none absolute left-2.5 top-2.5 size-4 text-(--color-text-faint)" />
+        <Input
+          value={searchTerm}
+          onChange={(event) => {
+            setPage(1);
+            setSearchTerm(event.target.value);
+          }}
+          placeholder="Search by name, phone, or email"
+          className="pl-8"
+        />
       </div>
 
-      <Card className="rounded-lg">
-        <CardContent className="space-y-4 pt-4">
-          <div className="relative max-w-xl">
-            <Search className="pointer-events-none absolute left-2.5 top-2.5 size-4 text-slate-400" />
-            <Input value={searchTerm} onChange={(event) => { setPage(1); setSearchTerm(event.target.value); }} placeholder="Search by name, phone, or email" className="pl-8" />
-          </div>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Phone</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Address</TableHead>
-                <TableHead>Created</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+      <Table>
+        <TableHeader>
+          <TableRow className="border-(--color-border)">
+            <TableHead className="text-(--color-text-muted)">Name</TableHead>
+            <TableHead className="text-(--color-text-muted)">Phone</TableHead>
+            <TableHead className="text-(--color-text-muted)">Email</TableHead>
+            <TableHead className="text-(--color-text-muted)">Address</TableHead>
+            <TableHead className="text-(--color-text-muted)">Created</TableHead>
+            <TableHead className="text-right text-(--color-text-muted)">Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+
+        <TableBody>
+          {isLoading ? (
+            Array.from({ length: 5 }).map((_, index) => (
+              <TableRow key={index} className="border-(--color-border)">
+                <TableCell colSpan={6}>
+                  <div className="h-10 rounded-md bg-(--color-bg-secondary)" />
+                </TableCell>
               </TableRow>
-            </TableHeader>
-            <TableBody>
-              {isLoading ? (
-                Array.from({ length: 5 }).map((_, index) => (
-                  <TableRow key={index}>
-                    <TableCell colSpan={6}><div className="h-10 rounded-md bg-slate-100" /></TableCell>
-                  </TableRow>
-                ))
-              ) : customers.length ? (
-                customers.map((customer) => (
-                  <TableRow key={customer.id}>
-                    <TableCell className="font-semibold text-slate-900">{customer.name}</TableCell>
-                    <TableCell>{customer.phone || "-"}</TableCell>
-                    <TableCell>{customer.email || "-"}</TableCell>
-                    <TableCell>{customer.address || "-"}</TableCell>
-                    <TableCell>{dateLabel(customer.createdAt)}</TableCell>
-                    <TableCell className="text-right">
-                      <div className="inline-flex gap-2">
-                        <Button variant="outline" size="icon" onClick={() => handleEdit(customer)} aria-label="Edit customer">
-                          <Edit2 className="size-4" />
-                        </Button>
-                        <Button variant="destructive" size="icon" onClick={() => handleArchive(customer.id)} aria-label="Archive customer">
-                          <Archive className="size-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={6} className="py-10 text-center text-slate-500">No customers found.</TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-          <div className="flex items-center justify-between border-t pt-4 text-sm text-slate-500">
-            <span>Page {meta?.page ?? page} of {meta?.totalPages ?? 1}</span>
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => setPage((current) => Math.max(1, current - 1))}>Previous</Button>
-              <Button variant="outline" size="sm" disabled={!meta || page >= meta.totalPages} onClick={() => setPage((current) => current + 1)}>Next</Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-      {modalOpen && <CustomerModal customer={selectedCustomer} onClose={() => setModalOpen(false)} />}
-    </div>
+            ))
+          ) : customers.length ? (
+            customers.map((customer) => (
+              <TableRow key={customer.id} className="border-(--color-border)">
+                <TableCell className="font-semibold text-(--color-text)">
+                  {customer.name}
+                </TableCell>
+                <TableCell className="text-(--color-text)">
+                  {customer.phone || "-"}
+                </TableCell>
+                <TableCell className="text-(--color-text)">
+                  {customer.email || "-"}
+                </TableCell>
+                <TableCell className="text-(--color-text)">
+                  {customer.address || "-"}
+                </TableCell>
+                <TableCell className="text-(--color-text)">
+                  {dateLabel(customer.createdAt)}
+                </TableCell>
+                <TableCell className="text-right">
+                  <div className="inline-flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => handleEdit(customer)}
+                      aria-label="Edit customer"
+                    >
+                      <Edit2 className="size-4" />
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      size="icon"
+                      onClick={() => handleArchive(customer.id)}
+                      aria-label="Archive customer"
+                    >
+                      <Archive className="size-4" />
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow className="border-(--color-border)">
+              <TableCell colSpan={6} className="py-10 text-center text-(--color-text-muted)">
+                No customers found.
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+
+      <div className="flex items-center justify-between border-t border-(--color-border) pt-4 text-sm text-(--color-text-muted)">
+        <span>
+          Page {meta?.page ?? page} of {meta?.totalPages ?? 1}
+        </span>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={page <= 1}
+            onClick={() => setPage((current) => Math.max(1, current - 1))}
+          >
+            Previous
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={!meta || page >= meta.totalPages}
+            onClick={() => setPage((current) => current + 1)}
+          >
+            Next
+          </Button>
+        </div>
+      </div>
+    </CardContent>
+  </Card>
+
+  {modalOpen && (
+    <CustomerModal
+      customer={selectedCustomer}
+      onClose={() => setModalOpen(false)}
+    />
+  )}
+</div>
   );
 }

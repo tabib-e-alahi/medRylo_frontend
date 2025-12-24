@@ -66,14 +66,14 @@ const statusVariant = (status: Invoice["paymentStatus"]) => {
 
 function StatCard({ label, value, icon: Icon }: { label: string; value: string | number; icon: typeof Package }) {
   return (
-    <Card className="rounded-lg">
+    <Card className="rounded-lg bg-(--color-surface)">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-sm">
-          <Icon className="size-4 text-teal-600" />
+        <CardTitle className="flex items-center gap-2 text-sm text-(--color-text-muted)">
+          <Icon className="size-4 text-(--color-primary)" />
           {label}
         </CardTitle>
       </CardHeader>
-      <CardContent className="text-2xl font-bold">{value}</CardContent>
+      <CardContent className="text-2xl font-bold text-(--color-text)">{value}</CardContent>
     </Card>
   );
 }
@@ -103,9 +103,9 @@ export default function PharmacyDashboardPage() {
   if (authLoading || overviewLoading) {
     return (
       <div className="space-y-6 p-6">
-        <div className="h-10 w-72 rounded-md bg-slate-100" />
+        <div className="h-10 w-72 rounded-md bg-(--color-bg-secondary)" />
         <div className="grid gap-4 md:grid-cols-4">
-          {Array.from({ length: 8 }).map((_, index) => <div key={index} className="h-28 rounded-lg bg-slate-100" />)}
+          {Array.from({ length: 8 }).map((_, index) => <div key={index} className="h-28 rounded-lg bg-(--color-bg-secondary)" />)}
         </div>
       </div>
     );
@@ -115,8 +115,8 @@ export default function PharmacyDashboardPage() {
     <div className="space-y-6 p-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">Pharmacy Analytics</h1>
-          <p className="text-slate-500">Inventory, invoices, manual payment collections, and purchase activity.</p>
+          <h1 className="text-3xl font-bold text-(--color-text)">Pharmacy Analytics</h1>
+          <p className="text-(--color-text-muted)">Inventory, invoices, manual payment collections, and purchase activity.</p>
         </div>
         <div className="grid gap-2 sm:grid-cols-2">
           <Input type="date" value={dateFrom} onChange={(event) => setDateFrom(event.target.value)} />
@@ -136,74 +136,171 @@ export default function PharmacyDashboardPage() {
       </div>
 
       <div className="grid gap-6 xl:grid-cols-2">
-        <Card className="rounded-lg">
-          <CardHeader><CardTitle className="text-base">Monthly Sales</CardTitle></CardHeader>
+        <Card className="rounded-lg bg-(--color-surface) border-(--color-border) text-(--color-text)">
+          <CardHeader>
+            <CardTitle className="text-base text-(--color-text)">Monthly Sales</CardTitle>
+          </CardHeader>
+
           <CardContent className="h-72">
             {!salesLoading && sales?.monthlySales?.length ? (
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={sales.monthlySales}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <Tooltip formatter={(value) => money(value)} />
-                  <Area dataKey="amount" fill="#99f6e4" stroke="#0f766e" strokeWidth={2} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
+                  <XAxis dataKey="month" stroke="var(--color-text-muted)" />
+                  <YAxis stroke="var(--color-text-muted)" />
+                  <Tooltip
+                    formatter={(value) => money(value)}
+                    contentStyle={{
+                      backgroundColor: "var(--color-surface-raised)",
+                      borderColor: "var(--color-border)",
+                      color: "var(--color-text)",
+                    }}
+                    labelStyle={{
+                      color: "var(--color-text)",
+                    }}
+                    itemStyle={{
+                      color: "var(--color-primary)",
+                    }}
+                  />
+                  <Area
+                    dataKey="amount"
+                    fill="var(--color-primary-100)"
+                    stroke="var(--color-primary)"
+                    strokeWidth={2}
+                  />
                 </AreaChart>
               </ResponsiveContainer>
-            ) : <div className="flex h-full items-center justify-center text-sm text-slate-500">No sales data for this range.</div>}
+            ) : (
+              <div className="flex h-full items-center justify-center text-sm text-(--color-text-muted)">
+                No sales data for this range.
+              </div>
+            )}
           </CardContent>
         </Card>
 
-        <Card className="rounded-lg">
-          <CardHeader><CardTitle className="text-base">Payment Collection</CardTitle></CardHeader>
+        <Card className="rounded-lg bg-(--color-surface) border-(--color-border) text-(--color-text)">
+          <CardHeader>
+            <CardTitle className="text-base text-(--color-text)">Payment Collection</CardTitle>
+          </CardHeader>
+
           <CardContent className="h-72">
             {!salesLoading && sales?.monthlyPayments?.length ? (
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={sales.monthlyPayments}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <Tooltip formatter={(value) => money(value)} />
-                  <Bar dataKey="amount" fill="#2563eb" radius={[6, 6, 0, 0]} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
+                  <XAxis dataKey="month" stroke="var(--color-text-muted)" />
+                  <YAxis stroke="var(--color-text-muted)" />
+                  <Tooltip
+                    formatter={(value) => money(value)}
+                    contentStyle={{
+                      backgroundColor: "var(--color-surface-raised)",
+                      borderColor: "var(--color-border)",
+                      color: "var(--color-text)",
+                    }}
+                    labelStyle={{
+                      color: "var(--color-text)",
+                    }}
+                    itemStyle={{
+                      color: "var(--color-info)",
+                    }}
+                  />
+                  <Bar
+                    dataKey="amount"
+                    fill="var(--color-info)"
+                    radius={[6, 6, 0, 0]}
+                  />
                 </BarChart>
               </ResponsiveContainer>
-            ) : <div className="flex h-full items-center justify-center text-sm text-slate-500">No payment records for this range.</div>}
+            ) : (
+              <div className="flex h-full items-center justify-center text-sm text-(--color-text-muted)">
+                No payment records for this range.
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
 
       <div className="grid gap-6 xl:grid-cols-2">
-        <Card className="rounded-lg">
-          <CardHeader><CardTitle className="text-base">Top Selling Medicines</CardTitle></CardHeader>
+        <Card className="rounded-lg bg-(--color-surface) border-(--color-border) text-(--color-text)">
+          <CardHeader>
+            <CardTitle className="text-base text-(--color-text)">Top Selling Medicines</CardTitle>
+          </CardHeader>
+
           <CardContent>
             <Table>
-              <TableHeader><TableRow><TableHead>Medicine</TableHead><TableHead>Qty</TableHead><TableHead className="text-right">Total</TableHead></TableRow></TableHeader>
+              <TableHeader>
+                <TableRow className="border-(--color-border)">
+                  <TableHead className="text-(--color-text-muted)">Medicine</TableHead>
+                  <TableHead className="text-(--color-text-muted)">Qty</TableHead>
+                  <TableHead className="text-right text-(--color-text-muted)">Total</TableHead>
+                </TableRow>
+              </TableHeader>
+
               <TableBody>
-                {topSellingMedicines.length ? topSellingMedicines.map((item, index) => (
-                  <TableRow key={item.medicine?.id || index}>
-                    <TableCell className="font-medium">{item.medicine?.name || "Unknown medicine"}</TableCell>
-                    <TableCell>{item.quantity}</TableCell>
-                    <TableCell className="text-right">{money(item.total)}</TableCell>
+                {topSellingMedicines.length ? (
+                  topSellingMedicines.map((item, index) => (
+                    <TableRow key={item.medicine?.id || index} className="border-(--color-border)">
+                      <TableCell className="font-medium text-(--color-text)">
+                        {item.medicine?.name || "Unknown medicine"}
+                      </TableCell>
+                      <TableCell className="text-(--color-text)">
+                        {item.quantity}
+                      </TableCell>
+                      <TableCell className="text-right text-(--color-text)">
+                        {money(item.total)}
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow className="border-(--color-border)">
+                    <TableCell colSpan={3} className="py-8 text-center text-(--color-text-muted)">
+                      No sold medicines yet.
+                    </TableCell>
                   </TableRow>
-                )) : <TableRow><TableCell colSpan={3} className="py-8 text-center text-slate-500">No sold medicines yet.</TableCell></TableRow>}
+                )}
               </TableBody>
             </Table>
           </CardContent>
         </Card>
 
-        <Card className="rounded-lg">
-          <CardHeader><CardTitle className="text-base">Purchase Trend</CardTitle></CardHeader>
+        <Card className="rounded-lg bg-(--color-surface) border-(--color-border) text-(--color-text)">
+          <CardHeader>
+            <CardTitle className="text-base text-(--color-text)">Purchase Trend</CardTitle>
+          </CardHeader>
+
           <CardContent className="h-72">
             {purchases?.monthlyPurchases?.length ? (
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={purchases.monthlyPurchases}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <Tooltip formatter={(value) => money(value)} />
-                  <Bar dataKey="amount" fill="#f59e0b" radius={[6, 6, 0, 0]} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
+                  <XAxis dataKey="month" stroke="var(--color-text-muted)" />
+                  <YAxis stroke="var(--color-text-muted)" />
+                  <Tooltip
+                    formatter={(value) => money(value)}
+                    contentStyle={{
+                      backgroundColor: "var(--color-surface-raised)",
+                      borderColor: "var(--color-border)",
+                      color: "var(--color-text)",
+                    }}
+                    labelStyle={{
+                      color: "var(--color-text)",
+                    }}
+                    itemStyle={{
+                      color: "var(--color-warning)",
+                    }}
+                  />
+                  <Bar
+                    dataKey="amount"
+                    fill="var(--color-warning)"
+                    radius={[6, 6, 0, 0]}
+                  />
                 </BarChart>
               </ResponsiveContainer>
-            ) : <div className="flex h-full items-center justify-center text-sm text-slate-500">No purchase data for this range.</div>}
+            ) : (
+              <div className="flex h-full items-center justify-center text-sm text-(--color-text-muted)">
+                No purchase data for this range.
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
@@ -214,59 +311,114 @@ export default function PharmacyDashboardPage() {
       </div>
 
       <div className="grid gap-6 xl:grid-cols-3">
-        <Card className="rounded-lg">
-          <CardHeader><CardTitle className="text-base">Recent Invoices</CardTitle></CardHeader>
+        <Card className="rounded-lg bg-(--color-surface) border-(--color-border) text-(--color-text)">
+          <CardHeader>
+            <CardTitle className="text-base text-(--color-text)">Recent Invoices</CardTitle>
+          </CardHeader>
+
           <CardContent>
             <Table>
               <TableBody>
-                {recentInvoices.length ? recentInvoices.map((invoice) => (
-                  <TableRow key={invoice.id}>
-                    <TableCell>
-                      <div className="font-medium">{invoice.invoiceNumber}</div>
-                      <div className="text-xs text-slate-500">{invoice.customer?.name || "Walk-in"} - {dateLabel(invoice.saleDate)}</div>
+                {recentInvoices.length ? (
+                  recentInvoices.map((invoice) => (
+                    <TableRow key={invoice.id} className="border-(--color-border)">
+                      <TableCell>
+                        <div className="font-medium text-(--color-text)">
+                          {invoice.invoiceNumber}
+                        </div>
+                        <div className="text-xs text-(--color-text-muted)">
+                          {invoice.customer?.name || "Walk-in"} - {dateLabel(invoice.saleDate)}
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-(--color-text)">
+                        {money(invoice.totalAmount)}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={statusVariant(invoice.paymentStatus)}>
+                          {invoice.paymentStatus}
+                        </Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow className="border-(--color-border)">
+                    <TableCell className="py-8 text-center text-(--color-text-muted)">
+                      No invoices.
                     </TableCell>
-                    <TableCell>{money(invoice.totalAmount)}</TableCell>
-                    <TableCell><Badge variant={statusVariant(invoice.paymentStatus)}>{invoice.paymentStatus}</Badge></TableCell>
                   </TableRow>
-                )) : <TableRow><TableCell className="py-8 text-center text-slate-500">No invoices.</TableCell></TableRow>}
+                )}
               </TableBody>
             </Table>
           </CardContent>
         </Card>
 
-        <Card className="rounded-lg">
-          <CardHeader><CardTitle className="text-base">Recent Payments</CardTitle></CardHeader>
+        <Card className="rounded-lg bg-(--color-surface) border-(--color-border) text-(--color-text)">
+          <CardHeader>
+            <CardTitle className="text-base text-(--color-text)">Recent Payments</CardTitle>
+          </CardHeader>
+
           <CardContent>
             <Table>
               <TableBody>
-                {recentPayments.length ? recentPayments.map((payment) => (
-                  <TableRow key={payment.id}>
-                    <TableCell>
-                      <div className="font-medium">{payment.invoice?.invoiceNumber || "Invoice"}</div>
-                      <div className="text-xs text-slate-500">{payment.paymentMode} - {dateLabel(payment.paymentDate)}</div>
+                {recentPayments.length ? (
+                  recentPayments.map((payment) => (
+                    <TableRow key={payment.id} className="border-(--color-border)">
+                      <TableCell>
+                        <div className="font-medium text-(--color-text)">
+                          {payment.invoice?.invoiceNumber || "Invoice"}
+                        </div>
+                        <div className="text-xs text-(--color-text-muted)">
+                          {payment.paymentMode} - {dateLabel(payment.paymentDate)}
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-right text-(--color-text)">
+                        {money(payment.amount)}
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow className="border-(--color-border)">
+                    <TableCell className="py-8 text-center text-(--color-text-muted)">
+                      No payments.
                     </TableCell>
-                    <TableCell className="text-right">{money(payment.amount)}</TableCell>
                   </TableRow>
-                )) : <TableRow><TableCell className="py-8 text-center text-slate-500">No payments.</TableCell></TableRow>}
+                )}
               </TableBody>
             </Table>
           </CardContent>
         </Card>
 
-        <Card className="rounded-lg">
-          <CardHeader><CardTitle className="text-base">Recent Purchases</CardTitle></CardHeader>
+        <Card className="rounded-lg bg-(--color-surface) border-(--color-border) text-(--color-text)">
+          <CardHeader>
+            <CardTitle className="text-base text-(--color-text)">Recent Purchases</CardTitle>
+          </CardHeader>
+
           <CardContent>
             <Table>
               <TableBody>
-                {recentPurchases.length ? recentPurchases.map((purchase) => (
-                  <TableRow key={purchase.id}>
-                    <TableCell>
-                      <div className="font-medium">{purchase.invoiceNumber}</div>
-                      <div className="text-xs text-slate-500">{purchase.supplier?.name || "Supplier"} - {dateLabel(purchase.purchaseDate)}</div>
+                {recentPurchases.length ? (
+                  recentPurchases.map((purchase) => (
+                    <TableRow key={purchase.id} className="border-(--color-border)">
+                      <TableCell>
+                        <div className="font-medium text-(--color-text)">
+                          {purchase.invoiceNumber}
+                        </div>
+                        <div className="text-xs text-(--color-text-muted)">
+                          {purchase.supplier?.name || "Supplier"} - {dateLabel(purchase.purchaseDate)}
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-right text-(--color-text)">
+                        {money(purchase.totalAmount)}
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow className="border-(--color-border)">
+                    <TableCell className="py-8 text-center text-(--color-text-muted)">
+                      No purchases.
                     </TableCell>
-                    <TableCell className="text-right">{money(purchase.totalAmount)}</TableCell>
                   </TableRow>
-                )) : <TableRow><TableCell className="py-8 text-center text-slate-500">No purchases.</TableCell></TableRow>}
+                )}
               </TableBody>
             </Table>
           </CardContent>
@@ -278,25 +430,50 @@ export default function PharmacyDashboardPage() {
 
 function InventoryTable({ title, items, mode }: { title: string; items: InventoryItem[]; mode: "stock" | "expiry" }) {
   return (
-    <Card className="rounded-lg">
-      <CardHeader><CardTitle className="text-base">{title}</CardTitle></CardHeader>
+    <Card className="rounded-lg bg-(--color-surface) border-(--color-border) text-(--color-text)">
+      <CardHeader>
+        <CardTitle className="text-base text-(--color-text)">
+          {title}
+        </CardTitle>
+      </CardHeader>
+
       <CardContent>
         <Table>
           <TableHeader>
-            <TableRow>
-              <TableHead>Medicine</TableHead>
-              <TableHead>{mode === "stock" ? "Stock" : "Expiry"}</TableHead>
-              <TableHead>Alert</TableHead>
+            <TableRow className="border-(--color-border)">
+              <TableHead className="text-(--color-text-muted)">Medicine</TableHead>
+              <TableHead className="text-(--color-text-muted)">
+                {mode === "stock" ? "Stock" : "Expiry"}
+              </TableHead>
+              <TableHead className="text-(--color-text-muted)">Alert</TableHead>
             </TableRow>
           </TableHeader>
+
           <TableBody>
-            {items.length ? items.map((item) => (
-              <TableRow key={item.id}>
-                <TableCell className="font-medium">{item.medicine?.name || "-"}</TableCell>
-                <TableCell>{mode === "stock" ? item.stockQuantity : dateLabel(item.expiryDate)}</TableCell>
-                <TableCell>{item.lowStockAlertQuantity}</TableCell>
+            {items.length ? (
+              items.map((item) => (
+                <TableRow key={item.id} className="border-(--color-border)">
+                  <TableCell className="font-medium text-(--color-text)">
+                    {item.medicine?.name || "-"}
+                  </TableCell>
+                  <TableCell className="text-(--color-text)">
+                    {mode === "stock" ? item.stockQuantity : dateLabel(item.expiryDate)}
+                  </TableCell>
+                  <TableCell className="text-(--color-text)">
+                    {item.lowStockAlertQuantity}
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow className="border-(--color-border)">
+                <TableCell
+                  colSpan={3}
+                  className="py-8 text-center text-(--color-text-muted)"
+                >
+                  No items found.
+                </TableCell>
               </TableRow>
-            )) : <TableRow><TableCell colSpan={3} className="py-8 text-center text-slate-500">No items found.</TableCell></TableRow>}
+            )}
           </TableBody>
         </Table>
       </CardContent>

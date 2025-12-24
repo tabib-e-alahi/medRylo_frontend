@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useLeafSettings, useCreateLeafSetting, useUpdateLeafSetting, useDeleteLeafSetting } from "@/features/leaf-settings/hooks";
+import { useLeafSettings, useDeleteLeafSetting } from "@/features/leaf-settings/hooks";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";

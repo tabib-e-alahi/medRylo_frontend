@@ -85,24 +85,24 @@ export function ProfileImageUpload({
   }
 
   return (
-    <div className="flex items-center gap-4 rounded-lg border border-slate-200 bg-white p-4">
-      <div className="relative h-20 w-20 overflow-hidden rounded-full bg-slate-100">
+    <div className="flex items-center gap-4 rounded-lg border border-(--color-border) bg-(--color-surface) p-4 text-(--color-text)">
+      <div className="relative h-20 w-20 overflow-hidden rounded-full bg-(--color-bg-secondary)">
         {preview ? (
           <img src={preview} alt={userName || "Profile"} className="h-full w-full object-cover" />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-slate-400">
+          <div className="flex h-full w-full items-center justify-center text-(--color-text-faint)">
             <Camera size={24} />
           </div>
         )}
       </div>
 
       <div className="min-w-0 flex-1">
-        <div className="font-semibold text-slate-900">Profile image</div>
-        <p className="text-sm text-slate-500">JPG, PNG, or WEBP. Maximum 1 MB.</p>
+        <div className="font-semibold text-(--color-text)">Profile image</div>
+        <p className="text-sm text-(--color-text-muted)">JPG, PNG, or WEBP. Maximum 1 MB.</p>
         <div className="mt-3 flex flex-wrap gap-2">
           <button
             type="button"
-            className="inline-flex items-center gap-2 rounded-md bg-teal-700 px-3 py-2 text-sm font-semibold text-white disabled:opacity-60"
+            className="inline-flex items-center gap-2 rounded-md bg-(--color-primary-dark) px-3 py-2 text-sm font-semibold text-(--color-text-inverse) disabled:opacity-60"
             onClick={() => inputRef.current?.click()}
             disabled={isLoading}
           >
@@ -111,7 +111,7 @@ export function ProfileImageUpload({
           </button>
           <button
             type="button"
-            className="inline-flex items-center gap-2 rounded-md border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 disabled:opacity-60"
+            className="inline-flex items-center gap-2 rounded-md border border-(--color-border) px-3 py-2 text-sm font-semibold text-(--color-text) disabled:opacity-60"
             onClick={handleRemove}
             disabled={isLoading || !preview}
           >

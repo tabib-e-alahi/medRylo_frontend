@@ -114,119 +114,123 @@ export default function PurchaseDetailsPage() {
 
   return (
     <div className="space-y-6 p-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+  <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+    <div>
+      <Button asChild variant="ghost" className="mb-2 px-0">
+        <Link href="/pharmacy/purchases">
+          <ArrowLeft className="size-4" />
+          Back to purchases
+        </Link>
+      </Button>
+      <h1 className="text-3xl font-bold text-(--color-text)">
+        Purchase {purchase.invoiceNumber}
+      </h1>
+      <p className="text-(--color-text-muted)">
+        Supplier purchase details, stock receiving state, and payment summary.
+      </p>
+    </div>
+    <div className="flex flex-wrap gap-2">
+      {purchase.purchaseStatus === "PENDING" && (
+        <Button onClick={handleMarkReceived} disabled={updateStatus.isPending}>
+          <CheckCircle2 className="size-4" />
+          Mark Received
+        </Button>
+      )}
+      <Button type="button" variant="outline" onClick={() => window.print()}>
+        <Printer className="size-4" />
+        Print
+      </Button>
+    </div>
+  </div>
+
+  <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
+    <Card className="rounded-lg bg-(--color-surface) border-(--color-border) text-(--color-text)">
+      <CardHeader>
+        <CardTitle className="text-base text-(--color-text)">Purchase Information</CardTitle>
+      </CardHeader>
+      <CardContent className="grid gap-4 md:grid-cols-2">
         <div>
-          <Button asChild variant="ghost" className="mb-2 px-0">
-            <Link href="/pharmacy/purchases">
-              <ArrowLeft className="size-4" />
-              Back to purchases
-            </Link>
-          </Button>
-          <h1 className="text-3xl font-bold text-slate-900">Purchase {purchase.invoiceNumber}</h1>
-          <p className="text-slate-500">Supplier purchase details, stock receiving state, and payment summary.</p>
+          <div className="text-xs uppercase text-(--color-text-muted)">Supplier</div>
+          <div className="font-semibold text-(--color-text)">{purchase.supplier?.name || "-"}</div>
+          <div className="text-sm text-(--color-text-muted)">{purchase.supplier?.contactPerson || "No contact person"}</div>
+          <div className="text-sm text-(--color-text-muted)">{[purchase.supplier?.phone, purchase.supplier?.email].filter(Boolean).join(" | ")}</div>
+        </div>
+        <div>
+          <div className="text-xs uppercase text-(--color-text-muted)">Invoice</div>
+          <div className="font-semibold text-(--color-text)">{purchase.invoiceNumber}</div>
+          <div className="text-sm text-(--color-text-muted)">{dateLabel(purchase.purchaseDate)}</div>
         </div>
         <div className="flex flex-wrap gap-2">
-          {purchase.purchaseStatus === "PENDING" && (
-            <Button onClick={handleMarkReceived} disabled={updateStatus.isPending}>
-              <CheckCircle2 className="size-4" />
-              Mark Received
-            </Button>
-          )}
-          <Button type="button" variant="outline" onClick={() => window.print()}>
-            <Printer className="size-4" />
-            Print
-          </Button>
+          <Badge variant={purchaseVariant(purchase.purchaseStatus)}>{purchase.purchaseStatus}</Badge>
+          <Badge variant={paymentVariant(purchase.paymentStatus)}>{purchase.paymentStatus}</Badge>
         </div>
-      </div>
+        <div className="text-sm text-(--color-text-muted)">{purchase.note || "No note added."}</div>
+      </CardContent>
+    </Card>
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
-        <Card className="rounded-lg">
-          <CardHeader>
-            <CardTitle className="text-base">Purchase Information</CardTitle>
-          </CardHeader>
-          <CardContent className="grid gap-4 md:grid-cols-2">
-            <div>
-              <div className="text-xs uppercase text-slate-500">Supplier</div>
-              <div className="font-semibold text-slate-900">{purchase.supplier?.name || "-"}</div>
-              <div className="text-sm text-slate-500">{purchase.supplier?.contactPerson || "No contact person"}</div>
-              <div className="text-sm text-slate-500">{[purchase.supplier?.phone, purchase.supplier?.email].filter(Boolean).join(" | ")}</div>
-            </div>
-            <div>
-              <div className="text-xs uppercase text-slate-500">Invoice</div>
-              <div className="font-semibold text-slate-900">{purchase.invoiceNumber}</div>
-              <div className="text-sm text-slate-500">{dateLabel(purchase.purchaseDate)}</div>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              <Badge variant={purchaseVariant(purchase.purchaseStatus)}>{purchase.purchaseStatus}</Badge>
-              <Badge variant={paymentVariant(purchase.paymentStatus)}>{purchase.paymentStatus}</Badge>
-            </div>
-            <div className="text-sm text-slate-500">{purchase.note || "No note added."}</div>
-          </CardContent>
-        </Card>
+    <Card className="rounded-lg bg-(--color-surface) border-(--color-border) text-(--color-text)">
+      <CardHeader>
+        <CardTitle className="text-base text-(--color-text)">Payment</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div>
+          <Label htmlFor="paidAmount">Paid Amount</Label>
+          <div className="mt-2 flex gap-2">
+            <Input id="paidAmount" type="number" step="0.01" min={0} value={paidAmount} onChange={(event) => setPaidAmountOverride(event.target.value)} />
+            <Button type="button" onClick={handlePaymentUpdate} disabled={updatePayment.isPending}>
+              <CreditCard className="size-4" />
+              Save
+            </Button>
+          </div>
+        </div>
+        <div className="space-y-2 border-t border-(--color-border) pt-4 text-sm">
+          <div className="flex justify-between"><span className="text-(--color-text-muted)">Subtotal</span><strong className="text-(--color-text)">{money(purchase.subtotal)}</strong></div>
+          <div className="flex justify-between"><span className="text-(--color-text-muted)">VAT</span><strong className="text-(--color-text)">{money(purchase.vatAmount)}</strong></div>
+          <div className="flex justify-between"><span className="text-(--color-text-muted)">Discount</span><strong className="text-(--color-text)">{money(purchase.discount)}</strong></div>
+          <div className="flex justify-between text-base"><span className="text-(--color-text)">Total</span><strong className="text-(--color-text)">{money(purchase.totalAmount)}</strong></div>
+          <div className="flex justify-between"><span className="text-(--color-text-muted)">Paid</span><strong className="text-(--color-text)">{money(purchase.paidAmount)}</strong></div>
+          <div className="flex justify-between"><span className="text-(--color-text-muted)">Due</span><strong className="text-(--color-text)">{money(purchase.dueAmount)}</strong></div>
+        </div>
+      </CardContent>
+    </Card>
+  </div>
 
-        <Card className="rounded-lg">
-          <CardHeader>
-            <CardTitle className="text-base">Payment</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <Label htmlFor="paidAmount">Paid Amount</Label>
-              <div className="mt-2 flex gap-2">
-                <Input id="paidAmount" type="number" step="0.01" min={0} value={paidAmount} onChange={(event) => setPaidAmountOverride(event.target.value)} />
-                <Button type="button" onClick={handlePaymentUpdate} disabled={updatePayment.isPending}>
-                  <CreditCard className="size-4" />
-                  Save
-                </Button>
-              </div>
-            </div>
-            <div className="space-y-2 border-t pt-4 text-sm">
-              <div className="flex justify-between"><span className="text-slate-500">Subtotal</span><strong>{money(purchase.subtotal)}</strong></div>
-              <div className="flex justify-between"><span className="text-slate-500">VAT</span><strong>{money(purchase.vatAmount)}</strong></div>
-              <div className="flex justify-between"><span className="text-slate-500">Discount</span><strong>{money(purchase.discount)}</strong></div>
-              <div className="flex justify-between text-base"><span>Total</span><strong>{money(purchase.totalAmount)}</strong></div>
-              <div className="flex justify-between"><span className="text-slate-500">Paid</span><strong>{money(purchase.paidAmount)}</strong></div>
-              <div className="flex justify-between"><span className="text-slate-500">Due</span><strong>{money(purchase.dueAmount)}</strong></div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      <Card className="rounded-lg">
-        <CardHeader>
-          <CardTitle className="text-base">Items</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Medicine</TableHead>
-                <TableHead>Batch</TableHead>
-                <TableHead>Expiry</TableHead>
-                <TableHead>Qty</TableHead>
-                <TableHead>Cost</TableHead>
-                <TableHead>Selling</TableHead>
-                <TableHead className="text-right">Total</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {(purchase.items ?? []).map((item) => (
-                <TableRow key={item.id}>
-                  <TableCell>
-                    <div className="font-semibold text-slate-900">{item.medicine?.name || "-"}</div>
-                    <div className="text-xs text-slate-500">{[item.medicine?.genericName, item.medicine?.strength].filter(Boolean).join(" - ")}</div>
-                  </TableCell>
-                  <TableCell>{item.batchNumber || item.inventory?.batchNumber || "-"}</TableCell>
-                  <TableCell>{dateLabel(item.expiryDate)}</TableCell>
-                  <TableCell>{item.quantity}</TableCell>
-                  <TableCell>{money(item.purchasePrice)}</TableCell>
-                  <TableCell>{money(item.sellingPrice)}</TableCell>
-                  <TableCell className="text-right font-semibold">{money(item.total)}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
-    </div>
+  <Card className="rounded-lg bg-(--color-surface) border-(--color-border) text-(--color-text)">
+    <CardHeader>
+      <CardTitle className="text-base text-(--color-text)">Items</CardTitle>
+    </CardHeader>
+    <CardContent>
+      <Table>
+        <TableHeader>
+          <TableRow className="border-(--color-border)">
+            <TableHead className="text-(--color-text-muted)">Medicine</TableHead>
+            <TableHead className="text-(--color-text-muted)">Batch</TableHead>
+            <TableHead className="text-(--color-text-muted)">Expiry</TableHead>
+            <TableHead className="text-(--color-text-muted)">Qty</TableHead>
+            <TableHead className="text-(--color-text-muted)">Cost</TableHead>
+            <TableHead className="text-(--color-text-muted)">Selling</TableHead>
+            <TableHead className="text-right text-(--color-text-muted)">Total</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {(purchase.items ?? []).map((item) => (
+            <TableRow key={item.id} className="border-(--color-border)">
+              <TableCell>
+                <div className="font-semibold text-(--color-text)">{item.medicine?.name || "-"}</div>
+                <div className="text-xs text-(--color-text-muted)">{[item.medicine?.genericName, item.medicine?.strength].filter(Boolean).join(" - ")}</div>
+              </TableCell>
+              <TableCell className="text-(--color-text)">{item.batchNumber || item.inventory?.batchNumber || "-"}</TableCell>
+              <TableCell className="text-(--color-text)">{dateLabel(item.expiryDate)}</TableCell>
+              <TableCell className="text-(--color-text)">{item.quantity}</TableCell>
+              <TableCell className="text-(--color-text)">{money(item.purchasePrice)}</TableCell>
+              <TableCell className="text-(--color-text)">{money(item.sellingPrice)}</TableCell>
+              <TableCell className="text-right font-semibold text-(--color-text)">{money(item.total)}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </CardContent>
+  </Card>
+</div>
   );
 }

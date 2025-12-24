@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useMedicineTypes, useCreateMedicineType, useUpdateMedicineType, useDeleteMedicineType } from "@/features/medicine-types/hooks";
+import { useMedicineTypes, useDeleteMedicineType } from "@/features/medicine-types/hooks";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";

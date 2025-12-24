@@ -135,7 +135,7 @@ export function Pagination({
   basePath: string;
   params: Record<string, string | undefined>;
 }) {
-  if (totalPages <= 1) return null;
+  if (totalPages <= 0) return null;
 
   const hrefFor = (target: number) => {
     const search = new URLSearchParams();

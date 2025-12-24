@@ -1,27 +1,43 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSession } from "@/lib/auth-client";
 import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
 import { DashboardNavbar } from "@/components/dashboard/DashboardNavbar";
 import { MobileSidebar } from "@/components/dashboard/MobileSidebar";
 import styles from "@/components/dashboard/dashboard.module.css";
+import { useRouter } from "next/navigation";
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { data: session } = useSession();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const router = useRouter()
+  const { data: session, isPending } = useSession();
+  useEffect(() => {
+    if (isPending) return;
+    if (!session?.user) {
+      router.replace("/login");
+    }
+  }, [isPending, session, router]);
 
+  // Show nothing while session is loading — prevents flash of unauthenticated content
+  if (isPending) {
+    return (
+      <div className={styles.shell} style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <span>Loading...</span>
+      </div>
+    );
+  }
   const user = session?.user
     ? {
-        name:  session.user.name,
-        email: session.user.email,
-        image: session.user.image,
-        role:  (session.user as any)?.role as string | undefined,
-      }
+      name: session.user.name,
+      email: session.user.email,
+      image: session.user.image,
+      role: (session.user as any)?.role as string | undefined,
+    }
     : undefined;
 
   return (

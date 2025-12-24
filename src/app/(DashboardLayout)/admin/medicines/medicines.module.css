@@ -1,230 +1,267 @@
-/* ═══════════════════════════════════════════════════════════
-   FILE: admin/medicines/medicines.module.css
-   FIX:  .select background: white → var(--color-surface)
-         .actionBtn background: white → var(--color-surface)
-   ═══════════════════════════════════════════════════════════ */
-
 .container {
-  padding: 2rem;
-  animation: fadeIn 0.5s ease-out;
+    padding: 2rem;
+    animation: fadeIn 0.5s ease-out;
 }
 
 .header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  margin-bottom: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 2rem;
 }
 
 .title {
-  font-size: 1.875rem;
-  font-weight: 700;
-  color: var(--color-text);
-  margin-bottom: 0.5rem;
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: 0.5rem;
 }
 
-.subtitle { color: var(--color-text-muted); }
+.subtitle {
+    color: var(--color-text-muted);
+}
 
 .addButton {
-  background: var(--color-primary);
-  color: white;
+    background: var(--color-primary);
+    color: white;
 }
 
 .tableCard {
-  overflow: hidden;
-  border: 1px solid var(--color-border);
-  background: var(--color-surface);
-  box-shadow: var(--shadow-md);
-  border-radius: var(--radius-xl);
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-md);
+    border-radius: var(--radius-xl);
 }
 
 .toolbar {
-  padding: 1.5rem;
-  border-bottom: 1px solid var(--color-border);
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--color-border);
 }
 
 .filtersRow {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
 }
 
 .searchWrapper {
-  position: relative;
-  max-width: 500px;
+    position: relative;
+    max-width: 500px;
 }
 
 .searchIcon {
-  position: absolute;
-  left: 0.75rem;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--color-text-faint);
-  width: 1rem;
-  height: 1rem;
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-text-faint);
+    width: 1rem;
+    height: 1rem;
 }
 
-.searchInput { padding-left: 2.5rem !important; }
+.searchInput {
+  padding-left: 2.5rem !important;
+  border: 1px solid var(--color-primary-200);
+  background: var(--color-bg);
+}
 
 .selectsWrapper {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
 }
 
 .select {
-  padding: 0.5rem 2rem 0.5rem 0.75rem;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--color-border);
-  /* FIX: was background: white */
-  background: var(--color-surface);
-  color: var(--color-text);
-  font-size: 0.875rem;
-  font-family: inherit;
-  outline: none;
-  cursor: pointer;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 0.5rem center;
-  transition: border-color var(--transition);
+    padding: 0.5rem 2rem 0.5rem 0.75rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    /* FIX: was background: white */
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-size: 0.875rem;
+    font-family: inherit;
+    outline: none;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+    transition: border-color var(--transition);
 }
 
 .select:focus {
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px var(--color-primary-50);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px var(--color-primary-50);
 }
 
 .tableWrapper {
-  width: 100%;
-  overflow-x: auto;
+    width: 100%;
+    overflow-x: auto;
 }
 
 .table {
-  width: 100%;
-  border-collapse: collapse;
+    width: 100%;
+    border-collapse: collapse;
 }
 
 .table th {
-  text-align: left;
-  padding: 1rem 1.5rem;
-  font-size: 0.8125rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--color-text-muted);
-  background: var(--color-bg-secondary);
-  border-bottom: 1px solid var(--color-border);
+    text-align: left;
+    padding: 1rem 1.5rem;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-muted);
+    background: var(--color-bg-secondary);
+    border-bottom: 1px solid var(--color-border);
 }
 
 .table td {
-  padding: 1rem 1.5rem;
-  font-size: 0.9375rem;
-  border-bottom: 1px solid var(--color-border);
+    padding: 1rem 1.5rem;
+    font-size: 0.9375rem;
+    border-bottom: 1px solid var(--color-border);
 }
 
-.table tr:hover { background: var(--color-bg-secondary); }
+.table tr:hover {
+    background: var(--color-bg-secondary);
+}
 
 .medicineInfo {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
 }
 
 .imageThumb {
-  width: 48px;
-  height: 48px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--color-border);
-  overflow: hidden;
-  background: var(--color-bg-secondary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    overflow: hidden;
+    background: var(--color-bg-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
 }
 
 .imageThumb img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
-.placeholderImg  { color: var(--color-text-faint); }
-.medicineName    { font-weight: 700; color: var(--color-text); }
+.placeholderImg {
+    color: var(--color-text-faint);
+}
+.medicineName {
+    font-weight: 700;
+    color: var(--color-text);
+}
 
 .genericName {
-  font-size: 0.75rem;
-  color: var(--color-text-muted);
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
 }
 
 .metaInfo {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
 }
 
 .categoryLabel {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--color-primary);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-primary);
 }
 
-.typeLabel { font-size: 0.75rem; color: var(--color-text-muted); }
+.typeLabel {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+}
 
-.priceInfo { display: flex; flex-direction: column; }
+.priceInfo {
+    display: flex;
+    flex-direction: column;
+}
 
-.sellPrice     { font-weight: 700; color: var(--color-text); }
-.supplierPrice { font-size: 0.75rem; color: var(--color-text-faint); }
-.stockLabel    { font-weight: 600; color: var(--color-text-muted); }
+.sellPrice {
+    font-weight: 700;
+    color: var(--color-text);
+}
+.supplierPrice {
+    font-size: 0.75rem;
+    color: var(--color-text-faint);
+}
+.stockLabel {
+    font-weight: 600;
+    color: var(--color-text-muted);
+}
 
 .statusBadge {
-  display: inline-flex;
-  padding: 0.25rem 0.75rem;
-  border-radius: 9999px;
-  font-size: 0.75rem;
-  font-weight: 700;
+    display: inline-flex;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
 }
 
-.active       { background: var(--color-success-bg);    color: var(--color-success); }
-.inactive     { background: var(--color-danger-bg);     color: var(--color-danger); }
-.discontinued { background: var(--color-bg-secondary);  color: var(--color-text-muted); }
+.active {
+    background: var(--color-success-bg);
+    color: var(--color-success);
+}
+.inactive {
+    background: var(--color-danger-bg);
+    color: var(--color-danger);
+}
+.discontinued {
+    background: var(--color-bg-secondary);
+    color: var(--color-text-muted);
+}
 
 .actionsCell {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.5rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
 }
 
 .actionBtn {
-  padding: 0.5rem;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--color-border);
-  /* FIX: was background: white */
-  background: var(--color-surface);
-  color: var(--color-text-muted);
-  transition: all 0.2s;
+    padding: 0.5rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    /* FIX: was background: white */
+    background: var(--color-surface);
+    color: var(--color-text-muted);
+    transition: all 0.2s;
 }
 
 .actionBtn:hover {
-  background: var(--color-bg-secondary);
-  color: var(--color-primary);
-  border-color: var(--color-primary);
+    background: var(--color-bg-secondary);
+    color: var(--color-primary);
+    border-color: var(--color-primary);
 }
 
 .actionBtn.delete:hover {
-  color: var(--color-danger);
-  border-color: var(--color-danger);
-  background: var(--color-danger-bg);
+    color: var(--color-danger);
+    border-color: var(--color-danger);
+    background: var(--color-danger-bg);
 }
 
 .emptyState {
-  padding: 4rem !important;
-  text-align: center;
-  color: var(--color-text-muted);
+    padding: 4rem !important;
+    text-align: center;
+    color: var(--color-text-muted);
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

@@ -79,9 +79,9 @@ export default async function PharmacyDetailsPage({
                 <dt>Website</dt>
                 <dd>
                   {pharmacy.website ? (
-                    <a href={pharmacy.website} target="_blank" rel="noreferrer">
+                    <Link href={pharmacy.website} target="_blank" rel="noreferrer">
                       Visit website
-                    </a>
+                    </Link>
                   ) : (
                     "N/A"
                   )}
