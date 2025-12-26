@@ -42,7 +42,7 @@ export async function proxy(request: NextRequest) {
   if (isAuthPage) {
     if (sessionToken) {
       const userData = await fetchUserRole(request);
-console.log("\n============== From proxy:user role 1 ============\n", userData, "\n===================\n");
+
       if (userData?.role) {
         const redirectPath =
           ROLE_DASHBOARD_MAP[userData.role] || "/user/dashboard";
