@@ -46,7 +46,6 @@ export async function proxy(request: NextRequest) {
       if (userData?.role) {
         const redirectPath =
           ROLE_DASHBOARD_MAP[userData.role] || "/user/dashboard";
-console.log("\n============== From proxy:user role 2 ============\n", userData, "\n===================\n");
         return NextResponse.redirect(new URL(redirectPath, request.url));
       }
     }
