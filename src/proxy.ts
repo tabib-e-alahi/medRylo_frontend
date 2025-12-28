@@ -36,7 +36,6 @@ export async function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
  console.log("PROXY HIT:", request.nextUrl.pathname);
   const sessionToken = getSessionToken(request);
-   console.log("\n============== From proxy:sessionToken ============\n", sessionToken, "\n===================\n");
   const isAuthPage = AUTH_PAGES.some((page) => pathname.startsWith(page));
 
   if (isAuthPage) {
