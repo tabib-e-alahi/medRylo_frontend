@@ -95,7 +95,7 @@ async function fetchUserRole(
 ): Promise<{ role: string } | null> {
   try {
     const cookie = request.headers.get("cookie") || "";
-console.log("\n============== From proxy:cookie ============\n", cookie, "\n===================\n");
+
     const res = await fetch(`${BACKEND_ORIGIN}/api/v1/auth/me`, {
       method: "GET",
       headers: {
