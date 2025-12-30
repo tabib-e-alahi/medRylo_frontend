@@ -104,7 +104,6 @@ async function fetchUserRole(
       },
       cache: "no-store",
     });
-console.log("\n============== From proxy:res fetch res ============\n", res, "\n===================\n");
     if (!res.ok) return null;
 
     const json = await res.json();
