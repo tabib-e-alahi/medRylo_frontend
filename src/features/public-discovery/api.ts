@@ -144,7 +144,6 @@ export async function getPublicMedicineDetails(id: string) {
 
 export async function getPublicPharmacies(params: Record<string, string | number | undefined>) {
   const res = await publicFetch<PublicPharmacy[]>("/pharmacies", params);
-  // console.log("\n====================\n",res,"\n========================\n");
   return res;
 }
 

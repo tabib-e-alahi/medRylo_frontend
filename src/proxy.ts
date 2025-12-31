@@ -34,7 +34,6 @@ function getSessionToken(request: NextRequest) {
 
 export async function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
- console.log("PROXY HIT:", request.nextUrl.pathname);
   const sessionToken = getSessionToken(request);
   const isAuthPage = AUTH_PAGES.some((page) => pathname.startsWith(page));
 
@@ -107,7 +106,7 @@ async function fetchUserRole(
     if (!res.ok) return null;
 
     const json = await res.json();
-console.log(json);
+
     const role = json?.data?.user?.role;
 
     return role ? { role } : null;
