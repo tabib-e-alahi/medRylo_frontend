@@ -1,0 +1,157 @@
+/* ═══════════════════════════════════════════════════════════
+   FILE: admin/medicines/components/form.module.css
+   FIX:  .select background: white → var(--color-surface)
+         .textarea background: white → var(--color-surface)
+   ═══════════════════════════════════════════════════════════ */
+
+.wideModal { max-width: 900px !important; }
+
+.form {
+  display: flex;
+  flex-direction: column;
+  max-height: 85vh;
+}
+
+.scrollArea {
+  padding: 1.5rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 1.5rem;
+}
+
+.imageSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.dropzone {
+  width: 100%;
+  aspect-ratio: 1;
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--color-bg-secondary);
+  position: relative;
+  transition: border-color 0.2s, background 0.2s;
+  cursor: pointer;
+}
+
+.dropzone:hover {
+  border-color: var(--color-primary);
+  background: var(--color-primary-50);
+}
+
+.uploadLabel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  text-align: center;
+  padding: 1rem;
+}
+
+.previewContainer {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.removeImg {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: rgba(239, 68, 68, 0.9);
+  color: white;
+  padding: 0.25rem;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mainInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.row         { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.rowFour     { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+
+.fullRow {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.select {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  /* FIX: was background: white */
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.select:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-50);
+}
+
+.textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  /* FIX: was background: white */
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: 0.875rem;
+  resize: none;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.textarea:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-50);
+}
+
+@media (max-width: 768px) {
+  .grid    { grid-template-columns: 1fr; }
+  .rowFour { grid-template-columns: 1fr 1fr; }
+}
